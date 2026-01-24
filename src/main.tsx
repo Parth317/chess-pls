@@ -11,7 +11,7 @@ import { AuthGuard } from './auth/AuthGuard.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <ErrorBoundary>
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/profile" element={<ProfilePage />} />
