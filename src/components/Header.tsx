@@ -1,4 +1,4 @@
-import { Trophy, RotateCcw, LogOut, User } from 'lucide-react';
+import { Trophy, RotateCcw, User } from 'lucide-react';
 
 interface HeaderProps {
     userElo: number;
