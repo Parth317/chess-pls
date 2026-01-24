@@ -1,54 +1,4 @@
-const latestGameRef = useRef(game);
-// Keep ref synced with latest game state
-useEffect(() => {
-    latestGameRef.current = game;
-}, [game]);
-
-// Bot Move Effect
-useEffect(() => {
-    let isCancelled = false;
-
-    const makeBotMove = async () => {
-        if (game.turn() !== 'b' || game.isGameOver() || gameResult) return;
-
-        // Instant Move (No Delay) to prevent Worker Race Conditions
-        setIsBotThinking(true);
-
-        // Get best move
-        const bestMove = await stockfish.getBestMove(game.fen());
-
-        if (isCancelled) return;
-
-        setIsBotThinking(false);
-
-        if (bestMove) {
-            const gameCopy = new Chess(game.fen());
-            try {
-                const result = gameCopy.move({
-                    from: bestMove.slice(0, 2),
-                    to: bestMove.slice(2, 4),
-                    promotion: bestMove.length > 4 ? bestMove[4] : undefined,
-                });
-
-                if (result) {
-                    setGame(gameCopy);
-                    setFen(gameCopy.fen());
-                    checkGameOver(gameCopy);
-                }
-            } catch (e) {
-                console.error("Bot move failed (likely race condition):", e);
-            }
-        }
-    };
-
-    makeBotMove();
-
-    return () => {
-        isCancelled = true;
-        setIsBotThinking(false);
-    };
-}, [game, gameResult]);
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from '../auth/AuthProvider';
 import { Chess } from 'chess.js';
 import { stockfish } from '../engine/StockfishWorker';
@@ -231,45 +181,39 @@ export function useChessGame() {
         }
     }, [game, log, checkGameOver]);
 
-
-
-    // Bot Move Effect (Handles Racing Conditions)
+    // Bot Move Effect
     useEffect(() => {
         let isCancelled = false;
 
         const makeBotMove = async () => {
-            // Only run if it's black's turn and game is active
             if (game.turn() !== 'b' || game.isGameOver() || gameResult) return;
 
+            // Instant Move (No Delay) to prevent Worker Race Conditions
             setIsBotThinking(true);
 
-            // 1. Wait (Thinking Time)
-            const delay = 1000 + Math.random() * 2000;
-            await new Promise(r => setTimeout(r, delay));
-
-            if (isCancelled) return; // Stop if unmounted/reset during delay
-
-            // 2. Calculate Move
+            // Get best move
             const bestMove = await stockfish.getBestMove(game.fen());
 
-            if (isCancelled) return; // Stop if unmounted/reset during calc
+            if (isCancelled) return;
 
             setIsBotThinking(false);
 
-            // 3. Apply Move
             if (bestMove) {
                 const gameCopy = new Chess(game.fen());
                 try {
-                    gameCopy.move({
+                    const result = gameCopy.move({
                         from: bestMove.slice(0, 2),
                         to: bestMove.slice(2, 4),
                         promotion: bestMove.length > 4 ? bestMove[4] : undefined,
                     });
-                    setGame(gameCopy);
-                    setFen(gameCopy.fen());
-                    checkGameOver(gameCopy);
+
+                    if (result) {
+                        setGame(gameCopy);
+                        setFen(gameCopy.fen());
+                        checkGameOver(gameCopy);
+                    }
                 } catch (e) {
-                    console.error("Bot move failed:", e);
+                    console.error("Bot move failed (likely race condition):", e);
                 }
             }
         };
@@ -278,7 +222,7 @@ export function useChessGame() {
 
         return () => {
             isCancelled = true;
-            setIsBotThinking(false); // Reset UI loading state on cleanup
+            setIsBotThinking(false);
         };
     }, [game, gameResult]);
 
