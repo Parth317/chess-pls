@@ -4,65 +4,48 @@ useEffect(() => {
     latestGameRef.current = game;
 }, [game]);
 
-// Bot Move Effect (Handles Racing Conditions)
+// Bot Move Effect
 useEffect(() => {
+    let isCancelled = false;
+
     const makeBotMove = async () => {
-        // 1. Validation: Only run if it's black's turn and game is active
         if (game.turn() !== 'b' || game.isGameOver() || gameResult) return;
 
-        // Guard: If the game has already changed since we started this effect, abort.
-        if (latestGameRef.current !== game) return;
-
+        // Instant Move (No Delay) to prevent Worker Race Conditions
         setIsBotThinking(true);
 
-        // 2. Wait (Thinking Time)
-        const delay = 1000 + Math.random() * 2000;
-        await new Promise(r => setTimeout(r, delay));
-
-        // Guard: Check if game reset/changed during delay
-        if (latestGameRef.current !== game) {
-            setIsBotThinking(false);
-            return;
-        }
-
-        // 3. Calculate Move
+        // Get best move
         const bestMove = await stockfish.getBestMove(game.fen());
 
-        // Guard: Check if game reset/changed during calc
-        if (latestGameRef.current !== game) {
-            setIsBotThinking(false);
-            return;
-        }
+        if (isCancelled) return;
 
         setIsBotThinking(false);
 
-        // 4. Apply Move
         if (bestMove) {
             const gameCopy = new Chess(game.fen());
             try {
-                gameCopy.move({
+                const result = gameCopy.move({
                     from: bestMove.slice(0, 2),
                     to: bestMove.slice(2, 4),
                     promotion: bestMove.length > 4 ? bestMove[4] : undefined,
                 });
 
-                // Final Guard: Ensure we are still on the same game before setting state
-                if (latestGameRef.current === game) {
+                if (result) {
                     setGame(gameCopy);
                     setFen(gameCopy.fen());
                     checkGameOver(gameCopy);
                 }
             } catch (e) {
-                console.error("Bot move failed:", e);
+                console.error("Bot move failed (likely race condition):", e);
             }
         }
     };
 
     makeBotMove();
 
-    // No cleanup needed because we use the ref check pattern
     return () => {
-        // Optional: setIsBotThinking(false) if we want to clear spinner immediately on unmount
+        isCancelled = true;
+        setIsBotThinking(false);
     };
 }, [game, gameResult]);
 import { useState, useCallback, useEffect, useRef } from 'react';
