@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react';
 import { ScrollText } from 'lucide-react';
 
 interface MoveHistoryProps {
@@ -13,6 +14,14 @@ export default function MoveHistory({ history }: MoveHistoryProps) {
             black: history[i + 1] || '',
         });
     }
+
+    const bottomRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (bottomRef.current) {
+            bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [history]);
 
     return (
         <div className="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden shadow-lg flex flex-col h-full max-h-[400px] md:max-h-full">
@@ -33,6 +42,7 @@ export default function MoveHistory({ history }: MoveHistoryProps) {
                         ))}
                     </tbody>
                 </table>
+                <div ref={bottomRef} />
                 {history.length === 0 && (
                     <div className="text-center py-8 text-slate-600 text-xs italic">
                         Moves will appear here

@@ -116,7 +116,7 @@ export default function GamePage() {
           >
             <ChessgroundBoard
               game={game}
-              orientation={game.turn() === 'w' ? 'white' : 'black'}
+              orientation="white"
               onMove={(from, to) => {
                 // ... hook logic ... 
                 log(`Chessground Move: ${from}->${to}`);
