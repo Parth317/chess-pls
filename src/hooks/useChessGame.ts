@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useAuth } from '../auth/AuthProvider';
 import { Chess } from 'chess.js';
 import { stockfish } from '../engine/StockfishWorker';
 
@@ -39,7 +40,9 @@ export function useChessGame() {
         localStorage.setItem('gambit_stats', JSON.stringify(stats));
     }, [stats]);
 
-    const updateElo = useCallback((result: 'win' | 'loss' | 'draw') => {
+    const { user } = useAuth();
+
+    const updateElo = useCallback(async (result: 'win' | 'loss' | 'draw') => {
         setStats(prev => {
             let newUser = prev.rating;
             let newBot = prev.botRating;
@@ -53,7 +56,7 @@ export function useChessGame() {
             }
             // Draw = no change
 
-            return {
+            const newStats = {
                 ...prev,
                 rating: newUser,
                 botRating: newBot,
@@ -61,8 +64,46 @@ export function useChessGame() {
                 losses: result === 'loss' ? prev.losses + 1 : prev.losses,
                 draws: result === 'draw' ? prev.draws + 1 : prev.draws,
             };
+
+            // Sync to Supabase if logged in
+            if (user) {
+                import('../auth/supabase').then(({ supabase }) => {
+                    supabase.from('profiles').update({
+                        rating: newStats.rating,
+                        wins: newStats.wins,
+                        losses: newStats.losses,
+                        draws: newStats.draws
+                    }).eq('id', user.id).then(({ error }) => {
+                        if (error) console.error("Failed to sync stats:", error);
+                    });
+                });
+            }
+
+            return newStats;
         });
-    }, []);
+    }, [user]);
+
+    // Fetch stats on login
+    useEffect(() => {
+        if (!user) return; // Keep using local storage logic if guest
+
+        import('../auth/supabase').then(({ supabase }) => {
+            supabase.from('profiles').select('rating, wins, losses, draws').eq('id', user.id).single()
+                .then(({ data, error }) => {
+                    if (data && !error) {
+                        setStats(prev => ({
+                            ...prev,
+                            rating: data.rating || 1200,
+                            wins: data.wins || 0,
+                            losses: data.losses || 0,
+                            draws: data.draws || 0,
+                            // Keep botRating local for now as it's not in DB schema yet, or reset it
+                            botRating: prev.botRating
+                        }));
+                    }
+                });
+        });
+    }, [user]);
 
     const checkGameOver = (paramGame: Chess) => {
         if (paramGame.isGameOver()) {

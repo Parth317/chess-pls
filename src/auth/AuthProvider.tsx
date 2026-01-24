@@ -44,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const signOut = async () => {
         if (configured) {
             await supabase.auth.signOut();
+            window.location.href = '/login'; // Force navigation
         }
     };
 
