@@ -81,8 +81,8 @@ export default function GamePage() {
         onSignOut={signOut}
       />
 
-      {/* Main Content Area - Fill remaining height minus padding */}
-      <main className="flex-1 max-w-6xl mx-auto w-full p-4 grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-4 items-start h-[calc(100vh-80px)] overflow-hidden">
+      {/* Main Content Area - Fill remaining height minus padding on Desktop, Scroll on Mobile */}
+      <main className="flex-1 max-w-6xl mx-auto w-full p-4 grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-4 items-start lg:h-[calc(100vh-80px)] lg:overflow-hidden h-auto">
         {/* Chess Board Area */}
         <div className="flex flex-col gap-2 h-full">
           {/* HUD / Clock Bar */}
