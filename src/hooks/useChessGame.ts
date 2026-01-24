@@ -187,8 +187,9 @@ export function useChessGame() {
         if (game.isGameOver() || game.turn() === 'w') return; // Assume player is White
 
         setIsBotThinking(true);
-        // Add small delay for realism if thinking is too fast
-        await new Promise(r => setTimeout(r, 500));
+        // Add variable delay (1-3s) for realism and to allow clock to tick
+        const delay = 1000 + Math.random() * 2000;
+        await new Promise(r => setTimeout(r, delay));
 
         // Get best move from Stockfish
         const bestMove = await stockfish.getBestMove(game.fen());
