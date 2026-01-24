@@ -2,11 +2,11 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { supabase } from '../auth/supabase';
 import { useAuth } from '../auth/AuthProvider';
-import { User, Check, ArrowLeft, AlertCircle } from 'lucide-react';
+import { User, Check, ArrowLeft, AlertCircle, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function ProfilePage() {
-    const { user } = useAuth();
+    const { user, signOut } = useAuth();
     const [loading, setLoading] = useState(true);
     const [username, setUsername] = useState('');
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
@@ -117,6 +117,15 @@ export default function ProfilePage() {
                             {loading ? 'Saving...' : 'Update Profile'}
                         </button>
                     </form>
+                </div>
+
+                <div className="mt-6 flex justify-center">
+                    <button
+                        onClick={() => signOut()}
+                        className="text-red-400 hover:text-red-300 font-bold transition-colors flex items-center gap-2"
+                    >
+                        <LogOut className="w-4 h-4" /> Sign Out
+                    </button>
                 </div>
             </div>
         </div>

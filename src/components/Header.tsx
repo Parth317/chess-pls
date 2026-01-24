@@ -5,10 +5,9 @@ interface HeaderProps {
     botElo: number;
     onToggleMode: () => void;
     isMenuOpen?: boolean;
-    onSignOut: () => void;
 }
 
-export default function Header({ userElo, botElo, onToggleMode, isMenuOpen, onSignOut }: HeaderProps) {
+export default function Header({ userElo, botElo, onToggleMode, isMenuOpen }: HeaderProps) {
     // Calculate progress for "Bot Difficulty" visual
     const difficultyPercent = Math.min(100, Math.max(0, ((botElo - 800) / (3000 - 800)) * 100));
 
@@ -52,13 +51,7 @@ export default function Header({ userElo, botElo, onToggleMode, isMenuOpen, onSi
                             <User className="w-4 h-4 md:w-5 md:h-5" />
                         </button>
 
-                        <button
-                            onClick={onSignOut}
-                            className="p-2 text-slate-400 hover:text-red-400 transition-colors bg-slate-700/50 hover:bg-slate-700 rounded-lg"
-                            title="Sign Out"
-                        >
-                            <LogOut className="w-4 h-4 md:w-5 md:h-5" />
-                        </button>
+
                     </div>
                 </div>
 

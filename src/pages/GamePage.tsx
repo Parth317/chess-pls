@@ -78,7 +78,6 @@ export default function GamePage() {
         botElo={stats.botRating}
         onToggleMode={handleRestart}
         isMenuOpen={isMenuOpen}
-        onSignOut={signOut}
       />
 
       {/* Main Content Area - Fill remaining height minus padding on Desktop, Scroll on Mobile */}
