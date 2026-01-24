@@ -84,7 +84,7 @@ export default function GamePage() {
       {/* Main Content Area - Fill remaining height minus padding on Desktop, Scroll on Mobile */}
       <main className="flex-1 max-w-6xl mx-auto w-full p-4 grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-4 items-start lg:h-[calc(100vh-80px)] lg:overflow-hidden h-auto">
         {/* Chess Board Area */}
-        <div className="flex flex-col gap-2 h-full">
+        <div className="flex flex-col gap-2 lg:h-full w-full">
           {/* HUD / Clock Bar */}
           <div className="flex justify-between items-center bg-slate-800 p-2 rounded-xl border border-slate-700 shadow-md shrink-0">
             <div className="flex items-center gap-3">
@@ -110,11 +110,11 @@ export default function GamePage() {
             )}
           </div>
 
-          {/* The Board - Flexible Height */}
-          <div className="flex-1 min-h-0 flex items-center justify-center">
+          {/* The Board - Flexible Height on Desktop, Full Width on Mobile */}
+          <div className="lg:flex-1 lg:min-h-0 w-full flex items-center justify-center">
             <div
               onClick={() => log("Board Container Clicked")}
-              className="aspect-square h-full max-h-full bg-slate-800 rounded-lg shadow-2xl overflow-hidden border-4 border-slate-700/50 relative"
+              className="aspect-square w-full lg:w-auto lg:h-full lg:max-h-full bg-slate-800 rounded-lg shadow-2xl overflow-hidden border-4 border-slate-700/50 relative"
             >
               <ChessgroundBoard
                 game={game}
