@@ -26,7 +26,6 @@ export default function MoveHistory({ history }: MoveHistoryProps) {
     }, [history]);
 
     return (
-    return (
         <div className="flex flex-col h-full overflow-hidden">
             <div className="bg-slate-900/50 p-3 border-b border-slate-700 flex items-center gap-2 shrink-0">
                 <ScrollText className="w-4 h-4 text-slate-400" />
@@ -56,6 +55,5 @@ export default function MoveHistory({ history }: MoveHistoryProps) {
                 )}
             </div>
         </div>
-    );
     );
 }
