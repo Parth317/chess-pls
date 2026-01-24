@@ -123,7 +123,8 @@ export function useChessGame() {
     const log = (msg: string) => setDebugLog(prev => [msg, ...prev].slice(0, 50));
 
     const makeMove = useCallback((move: { from: string; to: string; promotion?: string }) => {
-        const gameCopy = new Chess(game.fen());
+        const gameCopy = new Chess();
+        gameCopy.loadPgn(game.pgn()); // Clone with history
         log(`Attempting move: ${JSON.stringify(move)}`);
 
         try {
@@ -199,7 +200,10 @@ export function useChessGame() {
             setIsBotThinking(false);
 
             if (bestMove) {
-                const gameCopy = new Chess(game.fen());
+                // Use PGN to preserve history (Critical Fix)
+                const gameCopy = new Chess();
+                gameCopy.loadPgn(game.pgn());
+
                 try {
                     const result = gameCopy.move({
                         from: bestMove.slice(0, 2),

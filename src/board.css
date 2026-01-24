@@ -103,22 +103,30 @@ piece.fading {
 }
 
 .cg-wrap coords.ranks {
-    left: 4px;
-    top: -20px;
+    right: 0;
+    top: 0;
+    left: auto;
+    /* Override previous left */
     flex-flow: column-reverse;
     height: 100%;
-    width: 12px;
+    width: 15px;
+    padding-right: 2px;
 }
 
 .cg-wrap coords.files {
-    bottom: -15px;
-    /* Boost visibility */
+    bottom: 0;
     left: 0;
     flex-flow: row;
     width: 100%;
-    height: 16px;
+    height: 15px;
     text-transform: uppercase;
     text-align: center;
+}
+
+/* Make text visible against board colors if needed, but opacity helps */
+.cg-wrap coords {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    font-weight: bold;
 }
 
 .cg-wrap coords coord {
