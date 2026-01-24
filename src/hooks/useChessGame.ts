@@ -183,37 +183,54 @@ export function useChessGame() {
 
 
 
-    const botMove = useCallback(async () => {
-        if (game.isGameOver() || game.turn() === 'w') return; // Assume player is White
-
-        setIsBotThinking(true);
-        // Add variable delay (1-3s) for realism and to allow clock to tick
-        const delay = 1000 + Math.random() * 2000;
-        await new Promise(r => setTimeout(r, delay));
-
-        // Get best move from Stockfish
-        const bestMove = await stockfish.getBestMove(game.fen());
-        setIsBotThinking(false);
-
-        if (bestMove) {
-            const gameCopy = new Chess(game.fen());
-            gameCopy.move({
-                from: bestMove.slice(0, 2),
-                to: bestMove.slice(2, 4),
-                promotion: bestMove.length > 4 ? bestMove[4] : undefined, // Handle promotion "e7e8q"
-            });
-            setGame(gameCopy);
-            setFen(gameCopy.fen());
-            checkGameOver(gameCopy);
-        }
-    }, [game, checkGameOver]);
-
-    // Trigger bot move when turn changes to Black
+    // Bot Move Effect (Handles Racing Conditions)
     useEffect(() => {
-        if (game.turn() === 'b' && !gameResult) {
-            botMove();
-        }
-    }, [game, gameResult, botMove]);
+        let isCancelled = false;
+
+        const makeBotMove = async () => {
+            // Only run if it's black's turn and game is active
+            if (game.turn() !== 'b' || game.isGameOver() || gameResult) return;
+
+            setIsBotThinking(true);
+
+            // 1. Wait (Thinking Time)
+            const delay = 1000 + Math.random() * 2000;
+            await new Promise(r => setTimeout(r, delay));
+
+            if (isCancelled) return; // Stop if unmounted/reset during delay
+
+            // 2. Calculate Move
+            const bestMove = await stockfish.getBestMove(game.fen());
+
+            if (isCancelled) return; // Stop if unmounted/reset during calc
+
+            setIsBotThinking(false);
+
+            // 3. Apply Move
+            if (bestMove) {
+                const gameCopy = new Chess(game.fen());
+                try {
+                    gameCopy.move({
+                        from: bestMove.slice(0, 2),
+                        to: bestMove.slice(2, 4),
+                        promotion: bestMove.length > 4 ? bestMove[4] : undefined,
+                    });
+                    setGame(gameCopy);
+                    setFen(gameCopy.fen());
+                    checkGameOver(gameCopy);
+                } catch (e) {
+                    console.error("Bot move failed:", e);
+                }
+            }
+        };
+
+        makeBotMove();
+
+        return () => {
+            isCancelled = true;
+            setIsBotThinking(false); // Reset UI loading state on cleanup
+        };
+    }, [game, gameResult]);
 
     const resetGame = () => {
         const newGame = new Chess();
