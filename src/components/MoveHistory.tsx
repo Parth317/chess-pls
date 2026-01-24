@@ -15,22 +15,28 @@ export default function MoveHistory({ history }: MoveHistoryProps) {
         });
     }
 
+    const containerRef = useRef<HTMLDivElement>(null);
     const bottomRef = useRef<HTMLDivElement>(null);
 
+    // Auto-scroll logic: set scrollTop to scrollHeight
     useEffect(() => {
-        if (bottomRef.current) {
-            bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+        if (containerRef.current) {
+            containerRef.current.scrollTop = containerRef.current.scrollHeight;
         }
     }, [history]);
 
     return (
-        <div className="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden shadow-lg flex flex-col h-full max-h-[400px] md:max-h-full">
-            <div className="bg-slate-900/50 p-3 border-b border-slate-700 flex items-center gap-2">
+    return (
+        <div className="flex flex-col h-full overflow-hidden">
+            <div className="bg-slate-900/50 p-3 border-b border-slate-700 flex items-center gap-2 shrink-0">
                 <ScrollText className="w-4 h-4 text-slate-400" />
                 <span className="text-sm font-semibold text-slate-300">Move History</span>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent">
+            <div
+                ref={containerRef}
+                className="flex-1 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent"
+            >
                 <table className="w-full text-sm item-center">
                     <tbody>
                         {movePairs.map((pair) => (
@@ -50,5 +56,6 @@ export default function MoveHistory({ history }: MoveHistoryProps) {
                 )}
             </div>
         </div>
+    );
     );
 }

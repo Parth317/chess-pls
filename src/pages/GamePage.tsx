@@ -81,11 +81,12 @@ export default function GamePage() {
         onSignOut={signOut}
       />
 
-      <main className="flex-1 max-w-6xl mx-auto w-full p-4 md:p-8 grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8 items-start">
+      {/* Main Content Area - Fill remaining height minus padding */}
+      <main className="flex-1 max-w-6xl mx-auto w-full p-4 grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-4 items-start h-[calc(100vh-80px)] overflow-hidden">
         {/* Chess Board Area */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2 h-full">
           {/* HUD / Clock Bar */}
-          <div className="flex justify-between items-center bg-slate-800 p-3 rounded-xl border border-slate-700 shadow-md">
+          <div className="flex justify-between items-center bg-slate-800 p-2 rounded-xl border border-slate-700 shadow-md shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-300">
                 SF
@@ -109,66 +110,69 @@ export default function GamePage() {
             )}
           </div>
 
-          {/* The Board */}
-          <div
-            onClick={() => log("Board Container Clicked")}
-            className="aspect-square w-full max-w-[600px] mx-auto bg-slate-800 rounded-lg shadow-2xl overflow-hidden border-4 border-slate-700/50 relative"
-          >
-            <ChessgroundBoard
-              game={game}
-              orientation="white"
-              onMove={(from, to) => {
-                // ... hook logic ... 
-                log(`Chessground Move: ${from}->${to}`);
-                const moves = game.moves({ verbose: true });
-                const validMove = moves.find((m: any) => m.from === from && m.to === to);
-                if (validMove) {
-                  makeMove({ from, to, promotion: validMove.promotion ? 'q' : undefined });
-                }
-              }}
-            />
+          {/* The Board - Flexible Height */}
+          <div className="flex-1 min-h-0 flex items-center justify-center">
+            <div
+              onClick={() => log("Board Container Clicked")}
+              className="aspect-square h-full max-h-full bg-slate-800 rounded-lg shadow-2xl overflow-hidden border-4 border-slate-700/50 relative"
+            >
+              <ChessgroundBoard
+                game={game}
+                orientation="white"
+                onMove={(from, to) => {
+                  // ... hook logic ... 
+                  log(`Chessground Move: ${from}->${to}`);
+                  const moves = game.moves({ verbose: true });
+                  const validMove = moves.find((m: any) => m.from === from && m.to === to);
+                  if (validMove) {
+                    makeMove({ from, to, promotion: validMove.promotion ? 'q' : undefined });
+                  }
+                }}
+              />
 
-            {/* Game Setup Modal (Embedded) */}
-            {isMenuOpen && (
-              <div className="absolute inset-0 z-50 bg-slate-900/90 backdrop-blur-sm flex items-center justify-center p-4">
-                <div className="bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-2xl w-full max-w-sm animate-in zoom-in-95 duration-200">
-                  <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-white mb-2">New Game</h2>
-                    <p className="text-sm text-slate-400">Choose your game mode</p>
-                  </div>
+              {/* Game Setup Modal (Embedded) */}
+              {isMenuOpen && (
+                <div className="absolute inset-0 z-50 bg-slate-900/90 backdrop-blur-sm flex items-center justify-center p-4">
+                  <div className="bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-2xl w-full max-w-sm animate-in zoom-in-95 duration-200">
+                    <div className="text-center mb-6">
+                      <h2 className="text-2xl font-bold text-white mb-2">New Game</h2>
+                      <p className="text-sm text-slate-400">Choose your game mode</p>
+                    </div>
 
-                  <div className="grid gap-3">
-                    <button
-                      onClick={() => handleStartGame('untimed')}
-                      className="group relative p-3 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-xl transition-all hover:border-blue-500 text-left"
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-white">Untimed</span>
-                        <Play className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-400 w-4 h-4" />
-                      </div>
-                      <p className="text-xs text-slate-400">Infinite thinking time.</p>
-                    </button>
+                    <div className="grid gap-3">
+                      <button
+                        onClick={() => handleStartGame('untimed')}
+                        className="group relative p-3 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-xl transition-all hover:border-blue-500 text-left"
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-bold text-white">Untimed</span>
+                          <Play className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-400 w-4 h-4" />
+                        </div>
+                        <p className="text-xs text-slate-400">Infinite thinking time.</p>
+                      </button>
 
-                    <button
-                      onClick={() => handleStartGame('blitz')}
-                      className="group relative p-3 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-xl transition-all hover:border-yellow-500 text-left"
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-white flex items-center gap-2">
-                          <span className="text-yellow-500">⚡</span> Blitz (5+0)
-                        </span>
-                        <Play className="opacity-0 group-hover:opacity-100 transition-opacity text-yellow-500 w-4 h-4" />
-                      </div>
-                      <p className="text-xs text-slate-400">5 minutes per side.</p>
-                    </button>
+                      <button
+                        onClick={() => handleStartGame('blitz')}
+                        className="group relative p-3 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-xl transition-all hover:border-yellow-500 text-left"
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-bold text-white flex items-center gap-2">
+                            <span className="text-yellow-500">⚡</span> Blitz (5+0)
+                          </span>
+                          <Play className="opacity-0 group-hover:opacity-100 transition-opacity text-yellow-500 w-4 h-4" />
+                        </div>
+                        <p className="text-xs text-slate-400">5 minutes per side.</p>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
+
           {/* User HUD */}
-          <div className="flex justify-between items-center bg-slate-800 p-3 rounded-xl border border-slate-700 shadow-md">
+          <div className="flex justify-between items-center bg-slate-800 p-2 rounded-xl border border-slate-700 shadow-md shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold text-white">
                 YOU
@@ -190,10 +194,10 @@ export default function GamePage() {
         </div>
 
         {/* Sidebar Controls */}
-        <div className="flex flex-col gap-4 h-full">
+        <div className="flex flex-col gap-4 h-full min-h-0">
           {/* Game Status Card */}
           {gameOverReason ? (
-            <div className="bg-slate-800 border border-slate-600 p-4 rounded-xl shadow-lg animate-in slide-in-from-right-4">
+            <div className="bg-slate-800 border border-slate-600 p-4 rounded-xl shadow-lg animate-in slide-in-from-right-4 shrink-0">
               <div className="flex items-center gap-2 text-yellow-500 mb-2">
                 <AlertTriangle className="w-5 h-5" />
                 <h3 className="font-bold">Game Over</h3>
@@ -207,7 +211,7 @@ export default function GamePage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-2 shrink-0">
               <button
                 onClick={handleRestart}
                 className="py-3 bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
@@ -226,7 +230,7 @@ export default function GamePage() {
 
 
           {/* Move History */}
-          <div className="flex-1 min-h-[300px]">
+          <div className="flex-1 min-h-0 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg">
             <MoveHistory history={game.history()} />
           </div>
         </div>
