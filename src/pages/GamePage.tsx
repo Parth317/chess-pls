@@ -118,6 +118,7 @@ export default function GamePage() {
               <ChessgroundBoard
                 game={game}
                 orientation="white"
+                lastMove={game.history({ verbose: true }).length > 0 ? [game.history({ verbose: true }).at(-1).from, game.history({ verbose: true }).at(-1).to] : undefined}
                 onMove={(from, to) => {
                   // ... hook logic ... 
                   log(`Chessground Move: ${from}->${to}`);

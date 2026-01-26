@@ -8,9 +8,10 @@ interface Props {
     game: any; // Chess.js instance
     onMove: (from: string, to: string) => void;
     orientation?: 'white' | 'black';
+    lastMove?: [string, string];
 }
 
-export default function ChessgroundBoard({ game, onMove, orientation = 'white' }: Props) {
+export default function ChessgroundBoard({ game, onMove, orientation = 'white', lastMove }: Props) {
     const ref = useRef<HTMLDivElement>(null);
     const [api, setApi] = useState<Api | null>(null);
     const onMoveRef = useRef(onMove);
@@ -69,12 +70,10 @@ export default function ChessgroundBoard({ game, onMove, orientation = 'white' }
                     color: 'white',
                     dests: getDests(game),
                 },
-                // Highlight last move if available in history? 
-                // Chessground auto-handles this if we update via API move, but we update via FEN.
-                // Let's just trust FEN updates for state.
+                lastMove: lastMove as any,
             });
         }
-    }, [api, game, game.fen()]);
+    }, [api, game, game.fen(), lastMove]);
 
     return (
         <div style={{ height: '100%', width: '100%' }}>
