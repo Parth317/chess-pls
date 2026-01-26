@@ -97,7 +97,7 @@ export default function Login() {
                 <div className="text-center mb-8">
                     <div className="flex justify-center mb-4">
                         <div className="bg-blue-600 p-3 rounded-xl shadow-lg shadow-blue-500/20">
-                            <img src="/logo.png" alt="Chess Pls Logo" className="w-10 h-10 object-contain invert" />
+                            <img src="/logo.png" alt="Chess Pls Logo" className="w-10 h-10 object-contain" />
                         </div>
                     </div>
                     <h1 className="text-3xl font-bold text-white mb-2">Chess Pls</h1>
