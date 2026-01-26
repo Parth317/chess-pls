@@ -95,6 +95,11 @@ export default function Login() {
         <div className="min-h-[80vh] flex flex-col items-center justify-center p-4">
             <div className="max-w-md w-full bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-700/50">
                 <div className="text-center mb-8">
+                    <div className="flex justify-center mb-4">
+                        <div className="bg-blue-600 p-3 rounded-xl shadow-lg shadow-blue-500/20">
+                            <img src="/logo.png" alt="Chess Pls Logo" className="w-10 h-10 object-contain invert" />
+                        </div>
+                    </div>
                     <h1 className="text-3xl font-bold text-white mb-2">Chess Pls</h1>
                     <p className="text-slate-400">Adaptive Engine</p>
                 </div>

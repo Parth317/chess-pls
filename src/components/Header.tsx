@@ -1,4 +1,4 @@
-import { Trophy, RotateCcw, User } from 'lucide-react';
+import { RotateCcw, User } from 'lucide-react';
 
 interface HeaderProps {
     userElo: number;
@@ -19,7 +19,7 @@ export default function Header({ userElo, botElo, onToggleMode, isMenuOpen }: He
                     {/* Logo */}
                     <div className="flex items-center gap-3">
                         <div className="bg-blue-600 p-2 rounded-lg">
-                            <Trophy className="text-white w-5 h-5 md:w-6 md:h-6" />
+                            <img src="/logo.png" alt="Chess Pls Logo" className="w-5 h-5 md:w-6 md:h-6 object-contain invert cursor-pointer" />
                         </div>
                         <div>
                             <h1 className="text-lg md:text-xl font-bold text-white tracking-tight leading-tight">Chess Pls</h1>
