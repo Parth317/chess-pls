@@ -18,7 +18,7 @@ export default function Header({ userElo, botElo, onToggleMode, isMenuOpen }: He
                 <div className="flex justify-between items-center">
                     {/* Logo */}
                     <div className="flex items-center gap-3">
-                        <img src="/chess_logo.jpg?v=2" alt="Chess Pls Logo" className="w-10 h-10 md:w-12 md:h-12 rounded-lg object-contain cursor-pointer shadow-lg" />
+                        <img src="/chess_icon.jpg?v=3" alt="Chess Pls Logo" className="w-10 h-10 md:w-12 md:h-12 rounded-lg object-contain cursor-pointer shadow-lg" />
                         <div>
                             <h1 className="text-lg md:text-xl font-bold text-white tracking-tight leading-tight">Chess Pls</h1>
                             <p className="text-[10px] md:text-xs text-slate-400 font-medium uppercase tracking-wider">Adaptive Engine</p>
