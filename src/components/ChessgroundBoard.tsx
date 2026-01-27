@@ -70,7 +70,7 @@ export default function ChessgroundBoard({ game, onMove, orientation = 'white', 
                     color: 'white',
                     dests: getDests(game),
                 },
-                lastMove: lastMove as any,
+                lastMove: lastMove ? (lastMove as any) : [],
             });
         }
     }, [api, game, game.fen(), lastMove]);

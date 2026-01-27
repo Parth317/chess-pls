@@ -118,10 +118,9 @@ export function useChessGame() {
         }
     };
 
-    // Debugging
-    const [debugLog, setDebugLog] = useState<string[]>([]);
-    const log = (msg: string) => setDebugLog(prev => [msg, ...prev].slice(0, 50));
 
+    // Debugging (Internal Console)
+    const log = (msg: string) => console.log(`[ChessGame] ${msg}`);
     const makeMove = useCallback((move: { from: string; to: string; promotion?: string }) => {
         const gameCopy = new Chess();
         gameCopy.loadPgn(game.pgn()); // Clone with history
@@ -237,10 +236,7 @@ export function useChessGame() {
         setGameResult(null);
     };
 
-    const forceTestMove = () => {
-        log("Forcing Test Move: e2-e4");
-        makeMove({ from: 'e2', to: 'e4' });
-    };
+
 
     return {
         game,
@@ -249,8 +245,6 @@ export function useChessGame() {
         resetGame,
         isBotThinking,
         gameResult,
-        stats,
-        debugLog, // Exported
-        forceTestMove // Exported
+        stats
     };
 }
