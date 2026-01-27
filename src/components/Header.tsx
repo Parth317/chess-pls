@@ -21,7 +21,7 @@ export default function Header({ userElo, botElo, onToggleMode, isMenuOpen }: He
                         <img src="/chess_icon.jpg?v=3" alt="Chess Pls Logo" className="w-10 h-10 md:w-12 md:h-12 rounded-lg object-contain cursor-pointer shadow-lg" />
                         <div>
                             <h1 className="text-lg md:text-xl font-bold text-white tracking-tight leading-tight">Chess Pls</h1>
-                            <span className="text-[10px] md:text-xs text-green-400 font-mono">v1.4 (ROUTER FIX)</span>
+                            <span className="text-[10px] md:text-xs text-green-400 font-mono">v1.5 (INLINE FIX)</span>
                         </div>
                     </div>
 

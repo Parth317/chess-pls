@@ -98,17 +98,18 @@ function App() {
             )}
           </div>
 
-          {/* Container: Eval Bar + Board (Grid Layout for stability) */}
-          <div className="grid grid-cols-[24px_1fr] md:grid-cols-[32px_1fr] gap-2 md:gap-4 w-full max-w-[650px] mx-auto border border-green-500/30 p-1">
-            {/* Column 1: Eval Bar */}
-            <div className="h-full border-2 border-red-500">
+          {/* Container: Eval Bar + Board (Inline Styles for absolute safety) */}
+          <div style={{ display: 'flex', gap: '10px', width: '100%', maxWidth: '650px', margin: '0 auto', border: '2px solid rgba(0,255,0,0.3)', padding: '4px' }}>
+            {/* Column 1: Eval Bar - Rigid Width */}
+            <div style={{ flex: '0 0 24px', height: '100%', border: '2px solid red' }}>
               <EvaluationBar evaluation={evaluation} />
             </div>
 
-            {/* Column 2: Board */}
+            {/* Column 2: Board - Flexible */}
             <div
               onClick={() => log("Board Container Clicked")}
-              className="relative w-full aspect-square bg-slate-800 rounded-lg shadow-2xl overflow-hidden border-4 border-slate-700/50"
+              className="relative aspect-square bg-slate-800 rounded-lg shadow-2xl overflow-hidden border-4 border-slate-700/50"
+              style={{ flex: '1 1 auto', minWidth: 0 }}
             >
               <ChessgroundBoard
                 game={game}
