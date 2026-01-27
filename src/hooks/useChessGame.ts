@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from '../auth/AuthProvider';
 import { Chess } from 'chess.js';
-import { stockfish } from '../engine/StockfishWorker';
+import { stockfish, type Evaluation } from '../engine/StockfishWorker';
 
 export interface GameStats {
     rating: number; // User rating
@@ -24,16 +24,37 @@ export function useChessGame() {
     const [fen, setFen] = useState(game.fen());
     const [isBotThinking, setIsBotThinking] = useState(false);
     const [gameResult, setGameResult] = useState<string | null>(null);
+    const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
+
     // Persisted Stats
     const [stats, setStats] = useState<GameStats>(() => {
         const saved = localStorage.getItem('gambit_stats');
         return saved ? JSON.parse(saved) : INITIAL_STATS;
     });
 
-    // Initialize Stockfish ELO
+    // Initialize Stockfish & Listen for Evals
     useEffect(() => {
         stockfish.setElo(stats.botRating);
+
+        stockfish.onEvaluation = (evalData) => {
+            setEvaluation(evalData);
+        };
     }, [stats.botRating]);
+
+    // Continuous Analysis Loop
+    useEffect(() => {
+        if (gameResult) {
+            stockfish.stop();
+            return;
+        }
+
+        // Only analyze if it's NOT the bot's turn (Bot does its own search)
+        // Or if we want to see eval while bot thinks, getBestMove handles that via callback now.
+        // So we just need to trigger analysis when it's HUMAN turn.
+        if (game.turn() === 'w') {
+            stockfish.startAnalysis(game.fen());
+        }
+    }, [fen, gameResult, game.turn()]);
 
     // Persist Stats
     useEffect(() => {
@@ -120,52 +141,36 @@ export function useChessGame() {
 
 
     // Debugging (Internal Console)
-    const log = (msg: string) => console.log(`[ChessGame] ${msg}`);
+    const log = (msg: string) => console.log(`[ChessGame] ${msg} `);
     const makeMove = useCallback((move: { from: string; to: string; promotion?: string }) => {
         const gameCopy = new Chess();
         gameCopy.loadPgn(game.pgn()); // Clone with history
-        log(`Attempting move: ${JSON.stringify(move)}`);
+        log(`Attempting move: ${JSON.stringify(move)} `);
 
         try {
-            // Strategy 1: Smart Match via legal moves
-            const legalMoves = gameCopy.moves({ verbose: true });
-            const candidate = legalMoves.find(m => m.from === move.from && m.to === move.to);
-
             let result = null;
 
-            if (candidate) {
-                log(`Found candidate: ${candidate.san} (promo: ${candidate.promotion || 'none'})`);
-                // Move seems valid, execute it with proper flags
-                const cmd: any = { from: move.from, to: move.to };
-                if (candidate.promotion) cmd.promotion = 'q'; // Auto-queen
+            // Strategy: Standard move command
+            // We can trust the validation from the UI (App.tsx and Chessground) mostly
+            try {
+                // Pass promotion if exists, otherwise undefined
+                result = gameCopy.move({
+                    from: move.from,
+                    to: move.to,
+                    promotion: move.promotion || 'q' // Auto-queen fallthrough if not specified but needed
+                });
+            } catch (e) { /* ignore */ }
 
-                try {
-                    result = gameCopy.move(cmd);
-                } catch (err) {
-                    log(`Strategy 1 failed: ${err}`);
-                }
-            } else {
-                log(`No matching legal move found in ${legalMoves.length} options`);
-            }
-
-            // Strategy 2: Brute Force (Standard)
-            if (!result) {
-                log("Trying Strategy 2: Standard move command");
-                try {
-                    result = gameCopy.move({ from: move.from, to: move.to, promotion: 'q' });
-                } catch (e) { /* ignore */ }
-            }
-
-            // Strategy 3: Brute Force (No promo)
-            if (!result) {
-                log("Trying Strategy 3: No promotion");
+            // Retry without promotion if failed (sometimes 'q' causes error if not promo move)
+            if (!result && !move.promotion) {
                 try {
                     result = gameCopy.move({ from: move.from, to: move.to });
                 } catch (e) { /* ignore */ }
             }
 
+
             if (result) {
-                log(`Move successful: ${result.san}`);
+                log(`Move successful: ${result.san} `);
                 setGame(gameCopy);
                 setFen(gameCopy.fen());
                 checkGameOver(gameCopy);
@@ -175,7 +180,7 @@ export function useChessGame() {
                 return false;
             }
         } catch (e) {
-            log(`Critical error during move: ${e}`);
+            log(`Critical error during move: ${e} `);
             console.error("Move execution failed:", e);
             return false;
         }
@@ -226,6 +231,7 @@ export function useChessGame() {
         return () => {
             isCancelled = true;
             setIsBotThinking(false);
+            stockfish.stop(); // Stop calculation if unmounting/changing turn
         };
     }, [game, gameResult]);
 
@@ -234,9 +240,11 @@ export function useChessGame() {
         setGame(newGame);
         setFen(newGame.fen());
         setGameResult(null);
+        setEvaluation(null);
+        stockfish.stop();
     };
 
-
+    const forceTestMove = () => { /* no-op */ };
 
     return {
         game,
@@ -245,6 +253,9 @@ export function useChessGame() {
         resetGame,
         isBotThinking,
         gameResult,
-        stats
+        stats,
+        evaluation,
+        debugLog: [],
+        forceTestMove
     };
 }

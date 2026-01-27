@@ -8,11 +8,16 @@ import { useChessGame } from './hooks/useChessGame';
 import { useGameClock } from './hooks/useGameClock';
 import { Play, RotateCcw, BarChart3, AlertTriangle } from 'lucide-react';
 
+import PromotionModal from './components/PromotionModal';
+
+import EvaluationBar from './components/EvaluationBar';
+
 function App() {
-  const { game, fen, makeMove, resetGame, isBotThinking, gameResult, stats, debugLog, forceTestMove } = useChessGame();
+  const { game, fen, makeMove, resetGame, isBotThinking, gameResult, stats, evaluation, debugLog, forceTestMove } = useChessGame();
   const [gameMode, setGameMode] = useState<'untimed' | 'blitz'>('untimed');
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [gameOverReason, setGameOverReason] = useState<string | null>(null);
+  const [pendingPromotion, setPendingPromotion] = useState<{ from: string, to: string, color: 'w' | 'b' } | null>(null);
 
   // Helper for debug logs
   const log = (msg: string) => console.log(`[App] ${msg}`);
@@ -39,6 +44,18 @@ function App() {
     resetGame();
     resetClock();
     setGameOverReason(null);
+    setPendingPromotion(null);
+  };
+
+  const onPromotionSelect = (piece: 'q' | 'r' | 'b' | 'n') => {
+    if (!pendingPromotion) return;
+
+    makeMove({
+      from: pendingPromotion.from,
+      to: pendingPromotion.to,
+      promotion: piece
+    });
+    setPendingPromotion(null);
   };
 
   return (
@@ -81,37 +98,46 @@ function App() {
             )}
           </div>
 
-          {/* The Board */}
-          <div
-            onClick={() => log("Board Container Clicked")}
-            className="aspect-square w-full max-w-[600px] mx-auto bg-slate-800 rounded-lg shadow-2xl overflow-hidden border-4 border-slate-700/50"
-          >
-            <ChessgroundBoard
-              game={game}
-              orientation={game.turn() === 'w' ? 'white' : 'black'}
-              onMove={(from, to) => {
-                log(`Chessground Move: ${from}->${to}`);
+          <div className="flex gap-4 items-stretch justify-center h-full">
+            <EvaluationBar evaluation={evaluation} />
 
-                // Validate move against chess.js
-                // Note: Chessground (via dests) already filtered invalid moves visually.
-                // We just need to check for promotion.
-                const moves = game.moves({ verbose: true });
-                const validMove = moves.find((m: any) => m.from === from && m.to === to);
+            <div
+              onClick={() => log("Board Container Clicked")}
+              className="relative aspect-square w-full max-w-[600px] bg-slate-800 rounded-lg shadow-2xl overflow-hidden border-4 border-slate-700/50"
+            >
+              <ChessgroundBoard
+                game={game}
+                orientation={game.turn() === 'w' ? 'white' : 'black'}
+                onMove={(from, to) => {
+                  log(`Chessground Move: ${from}->${to}`);
 
-                if (validMove) {
-                  // Default to Queen promotion for now
-                  makeMove({
-                    from,
-                    to,
-                    promotion: validMove.promotion ? 'q' : undefined
-                  });
-                } else {
-                  log("Invalid move rejected (logic)");
-                  // If visual state desyncs, forcing FEN update usually fixes it,
-                  // but Chessground acts on `fen` prop change automatically.
-                }
-              }}
-            />
+                  const moves = game.moves({ verbose: true });
+                  const validMove = moves.find((m: any) => m.from === from && m.to === to);
+
+                  if (validMove) {
+                    if (validMove.promotion) {
+                      log("Promotion detected - asking user");
+                      setPendingPromotion({
+                        from,
+                        to,
+                        color: game.turn()
+                      });
+                    } else {
+                      makeMove({ from, to });
+                    }
+                  } else {
+                    log("Invalid move rejected (logic)");
+                  }
+                }}
+              />
+
+              {pendingPromotion && (
+                <PromotionModal
+                  color={pendingPromotion.color}
+                  onSelect={onPromotionSelect}
+                />
+              )}
+            </div>
           </div>
 
           {/* User HUD */}
