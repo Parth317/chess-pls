@@ -10,7 +10,7 @@ import { Play, RotateCcw, BarChart3, AlertTriangle } from 'lucide-react';
 
 import PromotionModal from './components/PromotionModal';
 
-import EvaluationBar from './components/EvaluationBar';
+
 
 function App() {
   const { game, fen, makeMove, resetGame, isBotThinking, gameResult, stats, evaluation, debugLog, forceTestMove } = useChessGame();
@@ -98,52 +98,43 @@ function App() {
             )}
           </div>
 
-          {/* Container: Eval Bar + Board (Inline Styles for absolute safety) */}
-          <div style={{ display: 'flex', gap: '10px', width: '100%', maxWidth: '650px', margin: '0 auto', border: '2px solid rgba(0,255,0,0.3)', padding: '4px' }}>
-            {/* Column 1: Eval Bar - Rigid Width */}
-            <div style={{ flex: '0 0 24px', height: '100%', border: '2px solid red' }}>
-              <EvaluationBar evaluation={evaluation} />
-            </div>
+          {/* Board Area */}
+          <div
+            onClick={() => log("Board Container Clicked")}
+            className="relative w-full max-w-[600px] mx-auto aspect-square bg-slate-800 rounded-lg shadow-2xl overflow-hidden border-4 border-slate-700/50"
+          >
+            <ChessgroundBoard
+              game={game}
+              orientation={game.turn() === 'w' ? 'white' : 'black'}
+              onMove={(from, to) => {
+                log(`Chessground Move: ${from}->${to}`);
 
-            {/* Column 2: Board - Flexible */}
-            <div
-              onClick={() => log("Board Container Clicked")}
-              className="relative aspect-square bg-slate-800 rounded-lg shadow-2xl overflow-hidden border-4 border-slate-700/50"
-              style={{ flex: '1 1 auto', minWidth: 0 }}
-            >
-              <ChessgroundBoard
-                game={game}
-                orientation={game.turn() === 'w' ? 'white' : 'black'}
-                onMove={(from, to) => {
-                  log(`Chessground Move: ${from}->${to}`);
+                const moves = game.moves({ verbose: true });
+                const validMove = moves.find((m: any) => m.from === from && m.to === to);
 
-                  const moves = game.moves({ verbose: true });
-                  const validMove = moves.find((m: any) => m.from === from && m.to === to);
-
-                  if (validMove) {
-                    if (validMove.promotion) {
-                      log("Promotion detected - asking user");
-                      setPendingPromotion({
-                        from,
-                        to,
-                        color: game.turn()
-                      });
-                    } else {
-                      makeMove({ from, to });
-                    }
+                if (validMove) {
+                  if (validMove.promotion) {
+                    log("Promotion detected - asking user");
+                    setPendingPromotion({
+                      from,
+                      to,
+                      color: game.turn()
+                    });
                   } else {
-                    log("Invalid move rejected (logic)");
+                    makeMove({ from, to });
                   }
-                }}
-              />
+                } else {
+                  log("Invalid move rejected (logic)");
+                }
+              }}
+            />
 
-              {pendingPromotion && (
-                <PromotionModal
-                  color={pendingPromotion.color}
-                  onSelect={onPromotionSelect}
-                />
-              )}
-            </div>
+            {pendingPromotion && (
+              <PromotionModal
+                color={pendingPromotion.color}
+                onSelect={onPromotionSelect}
+              />
+            )}
           </div>
 
           {/* User HUD */}

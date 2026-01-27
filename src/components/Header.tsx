@@ -1,13 +1,9 @@
-import { RotateCcw, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-interface HeaderProps {
-    userElo: number;
-    botElo: number;
-    onToggleMode: () => void;
-    isMenuOpen?: boolean;
-}
+// ... (props interface)
 
 export default function Header({ userElo, botElo, onToggleMode, isMenuOpen }: HeaderProps) {
+    const navigate = useNavigate();
     // Calculate progress for "Bot Difficulty" visual
     const difficultyPercent = Math.min(100, Math.max(0, ((botElo - 800) / (3000 - 800)) * 100));
 
@@ -21,7 +17,7 @@ export default function Header({ userElo, botElo, onToggleMode, isMenuOpen }: He
                         <img src="/chess_icon.jpg?v=3" alt="Chess Pls Logo" className="w-10 h-10 md:w-12 md:h-12 rounded-lg object-contain cursor-pointer shadow-lg" />
                         <div>
                             <h1 className="text-lg md:text-xl font-bold text-white tracking-tight leading-tight">Chess Pls</h1>
-                            <span className="text-[10px] md:text-xs text-green-400 font-mono">v1.5 (INLINE FIX)</span>
+                            <span className="text-[10px] md:text-xs text-blue-400 font-mono">v1.6 (FINAL CLEANUP)</span>
                         </div>
                     </div>
 
@@ -42,14 +38,12 @@ export default function Header({ userElo, botElo, onToggleMode, isMenuOpen }: He
                         <div className="h-6 w-px bg-slate-700 mx-1"></div>
 
                         <button
-                            onClick={() => window.location.href = '/profile'}
+                            onClick={() => navigate('/profile')}
                             className="p-2 text-slate-400 hover:text-blue-400 transition-colors bg-slate-700/50 hover:bg-slate-700 rounded-lg"
                             title="Edit Profile"
                         >
                             <User className="w-4 h-4 md:w-5 md:h-5" />
                         </button>
-
-
                     </div>
                 </div>
 
