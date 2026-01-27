@@ -99,8 +99,8 @@ function App() {
           </div>
 
           <div className="flex gap-2 md:gap-4 items-stretch justify-center h-full">
-            {/* Prevent bar from shrinking, hidden on very small screens if needed, but let's try to keep it */}
-            <div className="flex-none hidden xs:block">
+            {/* Always visible, let flex handles resizing */}
+            <div className="flex-none">
               <EvaluationBar evaluation={evaluation} />
             </div>
 
