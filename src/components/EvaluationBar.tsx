@@ -54,7 +54,7 @@ export default function EvaluationBar({ evaluation }: Props) {
     // If percent is 0%, full black (Black winning).
 
     return (
-        <div className="w-4 md:w-8 h-full bg-slate-800 rounded-md overflow-hidden flex flex-col-reverse relative border border-slate-700 shadow-inner">
+        <div className="w-6 md:w-8 h-full bg-slate-800 rounded-md overflow-hidden flex flex-col-reverse relative border border-slate-600 shadow-lg ring-1 ring-slate-500/30">
             {/* Background is dark (Black's advantage) */}
 
             {/* Foreground is White (White's advantage) */}
@@ -63,8 +63,8 @@ export default function EvaluationBar({ evaluation }: Props) {
                 style={{ height: `${percent}%` }}
             />
 
-            {/* Text Label - Hidden on small mobile to save space/clutter */}
-            <div className={`absolute w-full text-center text-[8px] md:text-[10px] font-bold py-1 hidden md:block ${percent > 50 ? 'text-slate-800 bottom-0' : 'text-slate-200 top-0'}`}>
+            {/* Text Label - Always show now, just small */}
+            <div className={`absolute w-full text-center text-[9px] md:text-[10px] font-bold py-1 overflow-hidden ${percent > 50 ? 'text-slate-800 bottom-0' : 'text-slate-200 top-0'}`}>
                 {text}
             </div>
         </div>
