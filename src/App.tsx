@@ -99,9 +99,9 @@ function App() {
           </div>
 
           {/* Container: Eval Bar + Board (Grid Layout for stability) */}
-          <div className="grid grid-cols-[24px_1fr] md:grid-cols-[32px_1fr] gap-2 md:gap-4 w-full max-w-[650px] mx-auto">
+          <div className="grid grid-cols-[24px_1fr] md:grid-cols-[32px_1fr] gap-2 md:gap-4 w-full max-w-[650px] mx-auto border border-green-500/30 p-1">
             {/* Column 1: Eval Bar */}
-            <div className="h-full">
+            <div className="h-full border-2 border-red-500">
               <EvaluationBar evaluation={evaluation} />
             </div>
 
