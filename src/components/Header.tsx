@@ -1,6 +1,12 @@
 import { useNavigate } from 'react-router-dom';
+import { RotateCcw, User } from 'lucide-react';
 
-// ... (props interface)
+interface HeaderProps {
+    userElo: number;
+    botElo: number;
+    onToggleMode: () => void;
+    isMenuOpen?: boolean;
+}
 
 export default function Header({ userElo, botElo, onToggleMode, isMenuOpen }: HeaderProps) {
     const navigate = useNavigate();
