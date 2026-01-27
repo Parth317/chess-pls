@@ -98,15 +98,17 @@ function App() {
             )}
           </div>
 
-          <div className="flex gap-2 md:gap-4 items-stretch justify-center h-full w-full">
-            {/* Always visible, rigid width */}
-            <div className="flex-none z-10 h-full">
+          {/* Container: Eval Bar + Board (Grid Layout for stability) */}
+          <div className="grid grid-cols-[24px_1fr] md:grid-cols-[32px_1fr] gap-2 md:gap-4 w-full max-w-[650px] mx-auto">
+            {/* Column 1: Eval Bar */}
+            <div className="h-full">
               <EvaluationBar evaluation={evaluation} />
             </div>
 
+            {/* Column 2: Board */}
             <div
               onClick={() => log("Board Container Clicked")}
-              className="relative flex-1 min-w-0 aspect-square max-w-[600px] bg-slate-800 rounded-lg shadow-2xl overflow-hidden border-4 border-slate-700/50"
+              className="relative w-full aspect-square bg-slate-800 rounded-lg shadow-2xl overflow-hidden border-4 border-slate-700/50"
             >
               <ChessgroundBoard
                 game={game}
