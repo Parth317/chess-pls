@@ -100,7 +100,7 @@ function App() {
 
           <div className="flex gap-2 md:gap-4 items-stretch justify-center h-full w-full">
             {/* Always visible, rigid width */}
-            <div className="flex-none z-10">
+            <div className="flex-none z-10 h-full">
               <EvaluationBar evaluation={evaluation} />
             </div>
 
