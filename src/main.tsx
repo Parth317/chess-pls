@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './index.css'
 import { ErrorBoundary } from './components/ErrorBoundary.tsx'
 import Layout from './components/Layout.tsx'
@@ -11,7 +11,7 @@ import { AuthGuard } from './auth/AuthGuard.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <ErrorBoundary>
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
+    <HashRouter>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/profile" element={<ProfilePage />} />
@@ -24,6 +24,6 @@ createRoot(document.getElementById('root')!).render(
           </Route>
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   </ErrorBoundary>
 )
