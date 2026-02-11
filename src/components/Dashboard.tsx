@@ -27,8 +27,14 @@ export default function Dashboard({ stats, isOpen, onClose, isGuest }: Dashboard
     ] as const;
 
     return (
-        <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex justify-end transition-opacity duration-300">
-            <div className="w-full max-w-md bg-slate-800 h-full shadow-2xl p-6 overflow-y-auto animate-in slide-in-from-right duration-300 border-l border-slate-700">
+        <div
+            onClick={onClose}
+            className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex justify-end transition-opacity duration-300 cursor-pointer"
+        >
+            <div
+                onClick={(e) => e.stopPropagation()}
+                className="w-full max-w-md bg-slate-800 h-full shadow-2xl p-6 overflow-y-auto animate-in slide-in-from-right duration-300 border-l border-slate-700 cursor-default"
+            >
 
                 <div className="flex justify-between items-center mb-8">
                     <h2 className="text-2xl font-bold text-white flex items-center gap-2">
