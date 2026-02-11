@@ -36,13 +36,14 @@ export default function Dashboard({ stats, isOpen, onClose, isGuest }: Dashboard
                 className="w-full max-w-md bg-slate-800 h-full shadow-2xl p-6 overflow-y-auto animate-in slide-in-from-right duration-300 border-l border-slate-700 cursor-default"
             >
 
-                <div className="flex justify-between items-center mb-8">
+                <div className="flex justify-between items-center mb-8 sticky top-0 bg-slate-800 z-10 py-2 -my-2">
                     <h2 className="text-2xl font-bold text-white flex items-center gap-2">
                         <Trophy className="text-yellow-500" /> Your Stats
                     </h2>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-slate-700 rounded-full transition-colors text-slate-400 hover:text-white"
+                        aria-label="Close dashboard"
+                        className="p-3 -mr-3 hover:bg-slate-700 rounded-full transition-colors text-slate-400 hover:text-white touch-manipulation"
                     >
                         <X className="w-6 h-6" />
                     </button>
