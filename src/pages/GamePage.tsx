@@ -34,8 +34,11 @@ export default function GamePage() {
     }
   }, [user]);
 
+  const isGuest = !user;
+
   // Helper for debug logs
   const log = (msg: string) => console.log(`[GamePage] ${msg}`);
+  console.log('User State:', { user, isGuest });
 
   // Clock Management
   const { whiteTime, blackTime, formatTime, resetClock } = useGameClock(
@@ -78,6 +81,7 @@ export default function GamePage() {
         botElo={stats.botRating}
         onToggleMode={handleRestart}
         isMenuOpen={isMenuOpen}
+        isGuest={isGuest}
       />
 
       {/* Main Content Area - Fill remaining height minus padding on Desktop, Scroll on Mobile */}
@@ -175,13 +179,13 @@ export default function GamePage() {
           <div className="flex justify-between items-center bg-slate-800 p-2 rounded-xl border border-slate-700 shadow-md shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold text-white">
-                YOU
+                {isGuest ? 'G' : 'YOU'}
               </div>
               <div className="flex flex-col leading-none">
                 <span className="text-sm font-bold text-slate-200">
-                  {username || (user?.email ? user.email.split('@')[0] : 'You')}
+                  {isGuest ? 'Guest' : (username || (user?.email ? user.email.split('@')[0] : 'You'))}
                 </span>
-                <span className="text-xs text-slate-500">Rating: {stats.rating}</span>
+                <span className="text-xs text-slate-500">Rating: {isGuest ? 'Unranked' : stats.rating}</span>
               </div>
             </div>
 
@@ -227,7 +231,12 @@ export default function GamePage() {
             </div>
           )}
 
-
+          {isGuest && (
+            <div className="mt-2 text-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+              <p className="text-xs text-slate-500 mb-2">Track your progress & rating</p>
+              <a href="#/login" className="text-xs font-bold text-blue-400 hover:text-blue-300 hover:underline">Sign In / Register</a>
+            </div>
+          )}
 
           {/* Move History */}
           <div className="flex-1 min-h-0 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg">
@@ -240,6 +249,7 @@ export default function GamePage() {
         stats={stats}
         isOpen={isDashboardOpen}
         onClose={() => setIsDashboardOpen(false)}
+        isGuest={isGuest}
       />
     </div>
   );
