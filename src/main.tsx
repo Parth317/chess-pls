@@ -14,13 +14,17 @@ createRoot(document.getElementById('root')!).render(
     <HashRouter>
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/profile" element={<ProfilePage />} />
+          {/* Public Routes */}
+          <Route path="/game" element={<GamePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
+          {/* Redirect root to game (public now) */}
+          <Route path="/" element={<Navigate to="/game" replace />} />
+
+          {/* Protected Routes */}
           <Route element={<AuthGuard />}>
-            <Route path="/game" element={<GamePage />} />
-            <Route path="/" element={<Navigate to="/game" replace />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Route>
       </Routes>
