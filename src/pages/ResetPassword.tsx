@@ -31,7 +31,8 @@ export default function ResetPassword() {
                 navigate('/game');
             }, 2000);
 
-        } catch (error: any) {
+        } catch (err) {
+            const error = err as Error;
             setMessage({ type: 'error', text: error.message });
         } finally {
             setLoading(false);

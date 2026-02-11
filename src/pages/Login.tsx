@@ -53,18 +53,19 @@ export default function Login() {
                 if (error) throw error;
                 navigate(from, { replace: true });
             }
-        } catch (err: any) {
+        } catch (err) {
             console.error("Auth Error:", err);
+            const error = err as Error;
 
             // Handle Rate Limits specifically
-            if (err.message && (
-                err.message.includes('rate limit') ||
-                err.message.includes('429') ||
-                err.message.toLowerCase().includes('too many requests')
+            if (error.message && (
+                error.message.includes('rate limit') ||
+                error.message.includes('429') ||
+                error.message.toLowerCase().includes('too many requests')
             )) {
                 setError("Service is busy (Rate Limit). This is a limitation of the free server. Please wait an hour and try again, or ask the admin to upgrade.");
             } else {
-                setError(err.message);
+                setError(error.message || "An unknown error occurred");
             }
         } finally {
             setLoading(false);
@@ -112,9 +113,10 @@ export default function Login() {
                 }
             });
             if (error) throw error;
-        } catch (err: any) {
-            console.error("Google Auth Error:", err);
-            setError(err.message);
+        } catch (err) {
+            const error = err as Error;
+            console.error("Google Auth Error:", error);
+            setError(error.message);
             setLoading(false);
         }
     };

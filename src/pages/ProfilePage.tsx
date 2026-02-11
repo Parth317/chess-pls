@@ -12,31 +12,35 @@ export default function ProfilePage() {
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
     useEffect(() => {
+        let mounted = true;
+
+        const getProfile = async () => {
+            try {
+                if (mounted) setLoading(true);
+                if (!user) return;
+
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('username')
+                    .eq('id', user.id)
+                    .single();
+
+                if (error) {
+                    console.warn('Error loading profile:', error);
+                }
+
+                if (data && mounted) {
+                    setUsername(data.username || '');
+                }
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        };
+
         getProfile();
+
+        return () => { mounted = false; };
     }, [user]);
-
-    const getProfile = async () => {
-        try {
-            setLoading(true);
-            if (!user) return;
-
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('username')
-                .eq('id', user.id)
-                .single();
-
-            if (error) {
-                console.warn('Error loading profile:', error);
-            }
-
-            if (data) {
-                setUsername(data.username || '');
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const updateProfile = async (e: FormEvent) => {
         e.preventDefault();
@@ -64,7 +68,8 @@ export default function ProfilePage() {
             }
 
             setMessage({ type: 'success', text: 'Profile updated successfully!' });
-        } catch (error: any) {
+        } catch (err) {
+            const error = err as Error;
             setMessage({ type: 'error', text: error.message });
         } finally {
             setLoading(false);
