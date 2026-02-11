@@ -127,6 +127,19 @@ export default function Dashboard({ stats, isOpen, onClose, isGuest }: Dashboard
                     </div>
                 </div>
 
+                <div className="mt-6 space-y-4 pb-6">
+                    <button
+                        onClick={onClose}
+                        className="w-full py-3.5 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2 active:scale-95 touch-manipulation"
+                    >
+                        Close
+                    </button>
+
+                    <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-lg text-xs text-blue-300 text-center">
+                        The engine automatically adjusts its difficulty based on your game results. Win to face a tougher opponent!
+                    </div>
+                </div>
+
             </div>
         </div>
     );
