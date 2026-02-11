@@ -177,42 +177,48 @@ export function useChessGame() {
                 .eq('id', user.id).single()
                 .then(({ data, error }) => {
                     if (data && !error) {
-                        setStats(prev => ({
-                            ...prev,
-                            // Legacy
-                            rating: data.rating || 1200,
-                            wins: data.wins || 0,
-                            losses: data.losses || 0,
-                            draws: data.draws || 0,
+                        setStats(prev => {
+                            const legacyRating = data.rating || 1200;
+                            // Helper to seed rating: use specific if exists, else legacy, else default
+                            const seedRating = (specific: number | null) => specific || legacyRating; // Use legacy as seed to preserve progress
 
-                            // Detailed
-                            bullet: {
-                                rating: data.bullet_rating || 1200,
-                                wins: data.bullet_wins || 0,
-                                losses: data.bullet_losses || 0,
-                                draws: data.bullet_draws || 0
-                            },
-                            blitz: {
-                                rating: data.blitz_rating || 1200,
-                                wins: data.blitz_wins || 0,
-                                losses: data.blitz_losses || 0,
-                                draws: data.blitz_draws || 0
-                            },
-                            rapid: {
-                                rating: data.rapid_rating || 1200,
-                                wins: data.rapid_wins || 0,
-                                losses: data.rapid_losses || 0,
-                                draws: data.rapid_draws || 0
-                            },
-                            classical: {
-                                rating: data.classical_rating || 1200,
-                                wins: data.classical_wins || 0,
-                                losses: data.classical_losses || 0,
-                                draws: data.classical_draws || 0
-                            },
+                            return {
+                                ...prev,
+                                // Legacy
+                                rating: legacyRating,
+                                wins: data.wins || 0,
+                                losses: data.losses || 0,
+                                draws: data.draws || 0,
 
-                            botRating: prev.botRating
-                        }));
+                                // Detailed
+                                bullet: {
+                                    rating: seedRating(data.bullet_rating),
+                                    wins: data.bullet_wins || 0,
+                                    losses: data.bullet_losses || 0,
+                                    draws: data.bullet_draws || 0
+                                },
+                                blitz: {
+                                    rating: seedRating(data.blitz_rating),
+                                    wins: data.blitz_wins || 0,
+                                    losses: data.blitz_losses || 0,
+                                    draws: data.blitz_draws || 0
+                                },
+                                rapid: {
+                                    rating: seedRating(data.rapid_rating),
+                                    wins: data.rapid_wins || 0,
+                                    losses: data.rapid_losses || 0,
+                                    draws: data.rapid_draws || 0
+                                },
+                                classical: {
+                                    rating: seedRating(data.classical_rating),
+                                    wins: data.classical_wins || 0,
+                                    losses: data.classical_losses || 0,
+                                    draws: data.classical_draws || 0
+                                },
+
+                                botRating: prev.botRating
+                            };
+                        });
                     }
                 });
         });

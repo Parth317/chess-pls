@@ -124,7 +124,7 @@ export default function GamePage() {
   return (
     <div className="min-h-screen flex flex-col font-sans selection:bg-blue-500/30 relative">
       <Header
-        userElo={stats.rating}
+        userElo={stats[currentMode].rating}
         botElo={stats.botRating}
         onToggleMode={handleRestart}
         isMenuOpen={isMenuOpen}
