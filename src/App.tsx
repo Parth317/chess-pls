@@ -75,6 +75,9 @@ function App() {
     setPendingPromotion(null);
   };
 
+  // Debug Log
+  console.log('User State:', { user, isGuest });
+
   return (
     <div className="h-screen w-screen flex flex-col font-sans selection:bg-blue-500/30 bg-slate-900 overflow-hidden">
       <Header
