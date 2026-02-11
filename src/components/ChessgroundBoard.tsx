@@ -50,7 +50,7 @@ export default function ChessgroundBoard({ game, onMove, orientation = 'white', 
                     },
                 },
                 drawable: { enabled: true },
-                premovable: { enabled: false }, // Simplify for now
+                premovable: { enabled: true },
                 highlight: {
                     lastMove: true,
                     check: true,
