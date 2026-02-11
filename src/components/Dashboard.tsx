@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { GameStats } from '../hooks/useChessGame';
+import type { GameStats } from '../hooks/useChessGame';
 import { X, Trophy, TrendingUp, TrendingDown, Target, Zap, Timer, Hourglass } from 'lucide-react';
 
 interface DashboardProps {
