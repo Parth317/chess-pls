@@ -199,7 +199,7 @@ export default function GamePage() {
         </div>
 
         {/* Sidebar Controls */}
-        <div className="flex flex-col gap-4 h-full min-h-0">
+        <div className="flex flex-col gap-4 h-full min-h-0 p-4 lg:p-0">
           {/* Game Status Card */}
           {gameOverReason ? (
             <div className="bg-slate-800 border border-slate-600 p-4 rounded-xl shadow-lg animate-in slide-in-from-right-4 shrink-0">
