@@ -40,9 +40,18 @@ export function useGameClock(initialTimeSeconds: number, activeTurn: Player | nu
         };
     }, [activeTurn, onTimeout]);
 
-    const resetClock = () => {
-        setWhiteTime(initialTimeSeconds);
-        setBlackTime(initialTimeSeconds);
+    const resetClock = (newTimeSeconds?: number) => {
+        const time = newTimeSeconds !== undefined ? newTimeSeconds : initialTimeSeconds;
+        setWhiteTime(time);
+        setBlackTime(time);
+    };
+
+    const addTime = (player: Player, seconds: number) => {
+        if (player === 'w') {
+            setWhiteTime(prev => prev + seconds);
+        } else {
+            setBlackTime(prev => prev + seconds);
+        }
     };
 
     const formatTime = (seconds: number) => {
@@ -51,5 +60,5 @@ export function useGameClock(initialTimeSeconds: number, activeTurn: Player | nu
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
-    return { whiteTime, blackTime, formatTime, resetClock };
+    return { whiteTime, blackTime, formatTime, resetClock, addTime };
 }

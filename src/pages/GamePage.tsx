@@ -13,7 +13,8 @@ export default function GamePage() {
   const { game, fen, makeMove, resetGame, isBotThinking, gameResult, stats } = useChessGame();
   const { signOut, user } = useAuth();
   const [username, setUsername] = useState<string | null>(null);
-  const [gameMode, setGameMode] = useState<'untimed' | 'blitz'>('untimed');
+  const [timeControl, setTimeControl] = useState<{ limit: number; increment: number } | null>(null);
+  const [menuView, setMenuView] = useState<'main' | 'timed'>('main');
   const [isMenuOpen, setIsMenuOpen] = useState(true); // Default to open
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [gameOverReason, setGameOverReason] = useState<string | null>(null);
@@ -38,12 +39,11 @@ export default function GamePage() {
 
   // Helper for debug logs
   const log = (msg: string) => console.log(`[GamePage] ${msg}`);
-  console.log('User State:', { user, isGuest });
 
   // Clock Management
-  const { whiteTime, blackTime, formatTime, resetClock } = useGameClock(
-    300,
-    gameMode === 'blitz' && !gameResult && !isMenuOpen ? (game.turn() === 'w' ? 'w' : 'b') : null,
+  const { whiteTime, blackTime, formatTime, resetClock, addTime } = useGameClock(
+    timeControl ? timeControl.limit : 300,
+    timeControl && !gameResult && !isMenuOpen ? (game.turn() === 'w' ? 'w' : 'b') : null,
     (timoutLoser) => {
       const result = timoutLoser === 'w' ? 'Black won on time' : 'White won on time';
       setGameOverReason(result);
@@ -58,21 +58,46 @@ export default function GamePage() {
     }
   }, [gameResult]);
 
-  const handleStartGame = (mode: 'untimed' | 'blitz') => {
-    setGameMode(mode);
+  const handleStartGame = (limit: number | null, increment: number = 0) => {
+    if (limit === null) {
+      setTimeControl(null); // Untimed
+    } else {
+      setTimeControl({ limit, increment });
+    }
     resetGame();
-    resetClock();
+    resetClock(limit || 300);
     setGameOverReason(null);
     setIsMenuOpen(false);
+    setMenuView('main'); // Reset menu view for next time
   };
 
   const handleRestart = () => {
     // restart logic: reset game instantly (no penalty) and show menu
     resetGame();
-    resetClock();
+    resetClock(); // Resets to last initial time? Wait, we might want to re-open menu or just restart same settings?
+    // User said "Update Blitz option... I want users the option to play any of these...". 
+    // "Restart" usually implies same settings. But "New Game" implies menu.
+    // Logic in previous version: clicked "Restart" -> opened menu.
+    // So let's keep that behavior: Open Menu.
     setGameOverReason(null);
     setIsMenuOpen(true);
+    setMenuView('main');
   };
+
+  // Time Controls Configuration
+  const TIME_CONTROLS = [
+    { label: '1+0', limit: 60, inc: 0, type: 'Bullet' },
+    { label: '2+1', limit: 120, inc: 1, type: 'Bullet' },
+    { label: '3+0', limit: 180, inc: 0, type: 'Blitz' },
+    { label: '3+2', limit: 180, inc: 2, type: 'Blitz' },
+    { label: '5+0', limit: 300, inc: 0, type: 'Blitz' },
+    { label: '5+3', limit: 300, inc: 3, type: 'Blitz' },
+    { label: '10+0', limit: 600, inc: 0, type: 'Rapid' },
+    { label: '10+5', limit: 600, inc: 5, type: 'Rapid' },
+    { label: '15+10', limit: 900, inc: 10, type: 'Rapid' },
+    { label: '30+0', limit: 1800, inc: 0, type: 'Classical' },
+    { label: '30+20', limit: 1800, inc: 20, type: 'Classical' },
+  ];
 
   return (
     <div className="min-h-screen flex flex-col font-sans selection:bg-blue-500/30 relative">
@@ -106,7 +131,7 @@ export default function GamePage() {
               )}
             </div>
 
-            {gameMode === 'blitz' && (
+            {timeControl && (
               <div className={`font-mono text-xl font-bold lg:px-3 lg:py-1 lg:rounded-md ${game.turn() === 'b' ? 'lg:bg-slate-700 text-white lg:shadow-inner' : 'text-slate-500'}`}>
                 {formatTime(blackTime)}
               </div>
@@ -125,12 +150,21 @@ export default function GamePage() {
                 orientation="white"
                 lastMove={game.history({ verbose: true }).length > 0 ? [game.history({ verbose: true }).at(-1).from, game.history({ verbose: true }).at(-1).to] : undefined}
                 onMove={(from, to) => {
-                  // ... hook logic ... 
                   log(`Chessground Move: ${from}->${to}`);
                   const moves = game.moves({ verbose: true });
                   const validMove = moves.find((m: any) => m.from === from && m.to === to);
+
+                  // Capture current turn BEFORE move is made
+                  const currentTurn = game.turn();
+
                   if (validMove) {
-                    makeMove({ from, to, promotion: validMove.promotion ? 'q' : undefined });
+                    const success = makeMove({ from, to, promotion: validMove.promotion ? 'q' : undefined });
+
+                    // Note: makeMove returns boolean success in my refactor? 
+                    // Let's check useChessGame.ts ... Yes, it returns boolean.
+                    if (success && timeControl && timeControl.increment > 0) {
+                      addTime(currentTurn, timeControl.increment);
+                    }
                   }
                 }}
               />
@@ -138,37 +172,64 @@ export default function GamePage() {
               {/* Game Setup Modal (Embedded) */}
               {isMenuOpen && (
                 <div className="absolute inset-0 z-50 bg-slate-900/90 backdrop-blur-sm flex items-center justify-center p-4">
-                  <div className="bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-2xl w-full max-w-sm animate-in zoom-in-95 duration-200">
-                    <div className="text-center mb-6">
-                      <h2 className="text-2xl font-bold text-white mb-2">New Game</h2>
-                      <p className="text-sm text-slate-400">Choose your game mode</p>
-                    </div>
+                  <div className="bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200">
 
-                    <div className="grid gap-3">
-                      <button
-                        onClick={() => handleStartGame('untimed')}
-                        className="group relative p-3 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-xl transition-all hover:border-blue-500 text-left"
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-bold text-white">Untimed</span>
-                          <Play className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-400 w-4 h-4" />
+                    {menuView === 'main' ? (
+                      <>
+                        <div className="text-center mb-6">
+                          <h2 className="text-2xl font-bold text-white mb-2">New Game</h2>
+                          <p className="text-sm text-slate-400">Choose your game mode</p>
                         </div>
-                        <p className="text-xs text-slate-400">Infinite thinking time.</p>
-                      </button>
+                        <div className="grid gap-3">
+                          <button
+                            onClick={() => handleStartGame(null)}
+                            className="group relative p-4 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-xl transition-all hover:border-blue-500 text-left"
+                          >
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="font-bold text-white text-lg">Untimed</span>
+                              <Play className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-400 w-5 h-5" />
+                            </div>
+                            <p className="text-sm text-slate-400">Infinite thinking time.</p>
+                          </button>
 
-                      <button
-                        onClick={() => handleStartGame('blitz')}
-                        className="group relative p-3 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-xl transition-all hover:border-yellow-500 text-left"
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-bold text-white flex items-center gap-2">
-                            <span className="text-yellow-500">⚡</span> Blitz (5+0)
-                          </span>
-                          <Play className="opacity-0 group-hover:opacity-100 transition-opacity text-yellow-500 w-4 h-4" />
+                          <button
+                            onClick={() => setMenuView('timed')}
+                            className="group relative p-4 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-xl transition-all hover:border-yellow-500 text-left"
+                          >
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="font-bold text-white flex items-center gap-2 text-lg">
+                                <span className="text-yellow-500">⏱️</span> Timed Match
+                              </span>
+                              <Play className="opacity-0 group-hover:opacity-100 transition-opacity text-yellow-500 w-5 h-5" />
+                            </div>
+                            <p className="text-sm text-slate-400">Blitz, Rapid, Bullet, Classical...</p>
+                          </button>
                         </div>
-                        <p className="text-xs text-slate-400">5 minutes per side.</p>
-                      </button>
-                    </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between mb-6">
+                          <button onClick={() => setMenuView('main')} className="text-slate-400 hover:text-white flex items-center gap-1 text-sm font-medium">
+                            ← Back
+                          </button>
+                          <h2 className="text-xl font-bold text-white">Select Time Control</h2>
+                          <div className="w-8"></div> {/* Spacer */}
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-3">
+                          {TIME_CONTROLS.map((tc) => (
+                            <button
+                              key={tc.label}
+                              onClick={() => handleStartGame(tc.limit, tc.inc)}
+                              className="bg-slate-700 hover:bg-slate-600 border border-slate-600 hover:border-slate-500 rounded-lg p-3 flex flex-col items-center justify-center transition-all"
+                            >
+                              <span className="text-lg font-bold text-white">{tc.label}</span>
+                              <span className="text-xs text-slate-400 uppercase font-medium">{tc.type}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               )}
@@ -190,7 +251,7 @@ export default function GamePage() {
               </div>
             </div>
 
-            {gameMode === 'blitz' && (
+            {timeControl && (
               <div className={`font-mono text-xl font-bold lg:px-3 lg:py-1 lg:rounded-md ${game.turn() === 'w' ? 'lg:bg-white lg:text-slate-900 lg:shadow-inner' : 'text-slate-500'}`}>
                 {formatTime(whiteTime)}
               </div>
