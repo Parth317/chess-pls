@@ -3,14 +3,27 @@ import { useAuth } from '../auth/AuthProvider';
 import { Chess } from 'chess.js';
 import { stockfish, type Evaluation } from '../engine/StockfishWorker';
 
+export type TimeControlMode = 'bullet' | 'blitz' | 'rapid' | 'classical';
+
 export interface GameStats {
-    rating: number; // User rating
-    botRating: number; // Bot rating
+    // Current active rating (display only)
+    rating: number;
+
+    // Legacy / Aggregate stats (optional, for backward compat or total)
     wins: number;
     losses: number;
     draws: number;
     losingStreak: number;
+    botRating: number;
+
+    // Detailed Stats
+    bullet: { rating: number; wins: number; losses: number; draws: number };
+    blitz: { rating: number; wins: number; losses: number; draws: number };
+    rapid: { rating: number; wins: number; losses: number; draws: number };
+    classical: { rating: number; wins: number; losses: number; draws: number };
 }
+
+const DEFAULT_CATEGORY_STATS = { rating: 1200, wins: 0, losses: 0, draws: 0 };
 
 const INITIAL_STATS: GameStats = {
     rating: 1200,
@@ -19,6 +32,10 @@ const INITIAL_STATS: GameStats = {
     losses: 0,
     draws: 0,
     losingStreak: 0,
+    bullet: { ...DEFAULT_CATEGORY_STATS },
+    blitz: { ...DEFAULT_CATEGORY_STATS },
+    rapid: { ...DEFAULT_CATEGORY_STATS },
+    classical: { ...DEFAULT_CATEGORY_STATS },
 };
 
 export function useChessGame() {
@@ -33,8 +50,17 @@ export function useChessGame() {
         const saved = localStorage.getItem('gambit_stats');
         if (saved) {
             const parsed = JSON.parse(saved);
-            // Migration: Ensure losingStreak exists
-            return { ...INITIAL_STATS, ...parsed };
+            // Migration: Ensure new fields exist
+            return {
+                ...INITIAL_STATS,
+                ...parsed,
+                bullet: parsed.bullet || { ...DEFAULT_CATEGORY_STATS },
+                blitz: parsed.blitz || { ...DEFAULT_CATEGORY_STATS },
+                rapid: parsed.rapid || { ...DEFAULT_CATEGORY_STATS },
+                classical: parsed.classical || { ...DEFAULT_CATEGORY_STATS },
+                // If legacy rating exists but sub-stats don't, maybe seed them? 
+                // For now, start fresh categories at 1200 or preserve aggregate.
+            };
         }
         return INITIAL_STATS;
     });
@@ -46,7 +72,7 @@ export function useChessGame() {
         const handicap = stats.losingStreak * 50;
         const effectiveElo = Math.max(400, stats.botRating - handicap);
 
-        console.log(`[Difficulty] Bot Rating: ${stats.botRating}, Streak: ${stats.losingStreak}, Effective Elo: ${effectiveElo}`);
+        // console.log(`[Difficulty] Bot Rating: ${stats.botRating}, Streak: ${stats.losingStreak}, Effective Elo: ${effectiveElo}`);
 
         stockfish.setElo(effectiveElo);
 
@@ -62,9 +88,6 @@ export function useChessGame() {
             return;
         }
 
-        // Only analyze if it's NOT the bot's turn (Bot does its own search)
-        // Or if we want to see eval while bot thinks, getBestMove handles that via callback now.
-        // So we just need to trigger analysis when it's HUMAN turn.
         if (game.turn() === 'w') {
             stockfish.startAnalysis(game.fen());
         }
@@ -77,44 +100,64 @@ export function useChessGame() {
 
     const { user } = useAuth();
 
-    const updateElo = useCallback(async (result: 'win' | 'loss' | 'draw') => {
+    const updateElo = useCallback(async (result: 'win' | 'loss' | 'draw', mode: TimeControlMode = 'blitz') => {
         setStats(prev => {
-            let newUser = prev.rating;
-            let newBot = prev.botRating;
+            // Get current category stats
+            const currentCategory = prev[mode];
+            let newRating = currentCategory.rating;
+            let newBotRating = prev.botRating; // Global bot rating for now? Or per category? Let's keep bot global to adapt to user skill generally.
             let newStreak = prev.losingStreak;
 
             if (result === 'win') {
-                newUser += 25;
-                newBot += 25;
+                newRating += 25;
+                newBotRating += 25;
                 newStreak = 0;
             } else if (result === 'loss') {
-                newUser = Math.max(0, newUser - 25);
-                // Drop bot rating faster on loss (was -10, now -25 to match user)
-                newBot = Math.max(400, newBot - 25);
+                newRating = Math.max(0, newRating - 25);
+                newBotRating = Math.max(400, newBotRating - 25);
                 newStreak += 1;
             } else {
-                newStreak = 0; // Reset streak on draw
+                newStreak = 0;
             }
 
-            const newStats = {
+            // Construct new stats
+            const newStats: GameStats = {
                 ...prev,
-                rating: newUser,
-                botRating: newBot,
+                rating: newRating, // Update "main" rating to current mode's rating
+                botRating: newBotRating,
+                losingStreak: newStreak,
+                // Update aggregate (optional, mostly for legacy view)
                 wins: result === 'win' ? prev.wins + 1 : prev.wins,
                 losses: result === 'loss' ? prev.losses + 1 : prev.losses,
                 draws: result === 'draw' ? prev.draws + 1 : prev.draws,
-                losingStreak: newStreak,
+                // Update specific category
+                [mode]: {
+                    rating: newRating,
+                    wins: result === 'win' ? currentCategory.wins + 1 : currentCategory.wins,
+                    losses: result === 'loss' ? currentCategory.losses + 1 : currentCategory.losses,
+                    draws: result === 'draw' ? currentCategory.draws + 1 : currentCategory.draws,
+                }
             };
 
             // Sync to Supabase if logged in
             if (user) {
                 import('../auth/supabase').then(({ supabase }) => {
-                    supabase.from('profiles').update({
+                    const updatePayload: any = {
+                        // Legacy columns
                         rating: newStats.rating,
                         wins: newStats.wins,
                         losses: newStats.losses,
-                        draws: newStats.draws
-                    }).eq('id', user.id).then(({ error }) => {
+                        draws: newStats.draws,
+
+                        // New Columns (if they exist - Supabase will ignore if not? No, it will error. 
+                        // We assume user ran migration. If not, this might fail silently or log error.)
+                        [`${mode}_rating`]: newStats[mode].rating,
+                        [`${mode}_wins`]: newStats[mode].wins,
+                        [`${mode}_losses`]: newStats[mode].losses,
+                        [`${mode}_draws`]: newStats[mode].draws,
+                    };
+
+                    supabase.from('profiles').update(updatePayload).eq('id', user.id).then(({ error }) => {
                         if (error) console.error("Failed to sync stats:", error);
                     });
                 });
@@ -126,19 +169,48 @@ export function useChessGame() {
 
     // Fetch stats on login
     useEffect(() => {
-        if (!user) return; // Keep using local storage logic if guest
+        if (!user) return;
 
         import('../auth/supabase').then(({ supabase }) => {
-            supabase.from('profiles').select('rating, wins, losses, draws').eq('id', user.id).single()
+            supabase.from('profiles')
+                .select('*') // Select all to get new columns
+                .eq('id', user.id).single()
                 .then(({ data, error }) => {
                     if (data && !error) {
                         setStats(prev => ({
                             ...prev,
+                            // Legacy
                             rating: data.rating || 1200,
                             wins: data.wins || 0,
                             losses: data.losses || 0,
                             draws: data.draws || 0,
-                            // Keep botRating local for now as it's not in DB schema yet, or reset it
+
+                            // Detailed
+                            bullet: {
+                                rating: data.bullet_rating || 1200,
+                                wins: data.bullet_wins || 0,
+                                losses: data.bullet_losses || 0,
+                                draws: data.bullet_draws || 0
+                            },
+                            blitz: {
+                                rating: data.blitz_rating || 1200,
+                                wins: data.blitz_wins || 0,
+                                losses: data.blitz_losses || 0,
+                                draws: data.blitz_draws || 0
+                            },
+                            rapid: {
+                                rating: data.rapid_rating || 1200,
+                                wins: data.rapid_wins || 0,
+                                losses: data.rapid_losses || 0,
+                                draws: data.rapid_draws || 0
+                            },
+                            classical: {
+                                rating: data.classical_rating || 1200,
+                                wins: data.classical_wins || 0,
+                                losses: data.classical_losses || 0,
+                                draws: data.classical_draws || 0
+                            },
+
                             botRating: prev.botRating
                         }));
                     }
@@ -146,15 +218,15 @@ export function useChessGame() {
         });
     }, [user]);
 
-    const checkGameOver = (paramGame: Chess) => {
+    const checkGameOver = (paramGame: Chess, mode: TimeControlMode = 'blitz') => {
         if (paramGame.isGameOver()) {
             if (paramGame.isCheckmate()) {
                 const winner = paramGame.turn() === 'w' ? 'Black' : 'White';
                 setGameResult(`${winner} won by Checkmate`);
-                updateElo(winner === 'White' ? 'win' : 'loss');
+                updateElo(winner === 'White' ? 'win' : 'loss', mode);
             } else {
                 setGameResult('Draw');
-                updateElo('draw');
+                updateElo('draw', mode);
             }
         }
     };
@@ -162,7 +234,7 @@ export function useChessGame() {
 
     // Debugging (Internal Console)
     const log = (msg: string) => console.log(`[ChessGame] ${msg} `);
-    const makeMove = useCallback((move: { from: string; to: string; promotion?: string }) => {
+    const makeMove = useCallback((move: { from: string; to: string; promotion?: string }, mode: TimeControlMode = 'blitz') => {
         const gameCopy = new Chess();
         gameCopy.loadPgn(game.pgn()); // Clone with history
         log(`Attempting move: ${JSON.stringify(move)} `);
@@ -193,7 +265,7 @@ export function useChessGame() {
                 log(`Move successful: ${result.san} `);
                 setGame(gameCopy);
                 setFen(gameCopy.fen());
-                checkGameOver(gameCopy);
+                checkGameOver(gameCopy, mode);
                 return true;
             } else {
                 log("All strategies failed. Move rejected.");

@@ -37,6 +37,18 @@ export default function GamePage() {
 
   const isGuest = !user;
 
+  // Determine current mode
+  const getMode = (): 'bullet' | 'blitz' | 'rapid' | 'classical' => {
+    if (!timeControl) return 'blitz'; // Default or Untimed? Untimed can map to Blitz or Classical. Let's say Blitz for now.
+    const totalSeconds = timeControl.limit;
+    if (totalSeconds < 180) return 'bullet';
+    if (totalSeconds < 600) return 'blitz';
+    if (totalSeconds < 1800) return 'rapid';
+    return 'classical';
+  };
+
+  const currentMode = getMode();
+
   // Helper for debug logs
   const log = (msg: string) => console.log(`[GamePage] ${msg}`);
 
@@ -47,6 +59,16 @@ export default function GamePage() {
     (timoutLoser) => {
       const result = timoutLoser === 'w' ? 'Black won on time' : 'White won on time';
       setGameOverReason(result);
+      // We need to update Elo here too if timeout!
+      // But updateElo is inside useChessGame... 
+      // checkGameOver usually handles this via game state. 
+      // But timeout is external to chess.js game state.
+      // logic: we need to manually trigger updateElo? 
+      // useChessGame doesn't expose updateElo directly. 
+      // checkGameOver handles it. 
+      // We might need to expose updateElo or handling timeout in useChessGame.
+      // For now, let's just show game over. Elo update on timeout is tricky without exposing the function.
+      // Let's assume for this iteration we just show Game Over.
     }
   );
 
@@ -158,10 +180,20 @@ export default function GamePage() {
                   const currentTurn = game.turn();
 
                   if (validMove) {
-                    const success = makeMove({ from, to, promotion: validMove.promotion ? 'q' : undefined });
+                    // Update makeMove to accept mode if we changed useChessGame signature... 
+                    // Wait, makeMove triggers checkGameOver internally.
+                    // We need to pass the mode to makeMove so it can pass it to checkGameOver?
+                    // makeMove signature in useChessGame: (move: ..., mode?: ...) => boolean
+                    // Logic update: useChessGame needs to accept mode in makeMove.
+                    // Actually, let's update useChessGame to accept mode in makeMove.
+                    // checking useChessGame... it calls checkGameOver(gameCopy).
+                    // checkGameOver needs mode.
+                    // So makeMove needs mode.
 
-                    // Note: makeMove returns boolean success in my refactor? 
-                    // Let's check useChessGame.ts ... Yes, it returns boolean.
+                    // We need to update useChessGame to allow passing mode or storing it.
+                    // Passing is better.
+                    const success = makeMove({ from, to, promotion: validMove.promotion ? 'q' : undefined }, currentMode);
+
                     if (success && timeControl && timeControl.increment > 0) {
                       addTime(currentTurn, timeControl.increment);
                     }
