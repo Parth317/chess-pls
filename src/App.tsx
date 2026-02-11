@@ -245,6 +245,7 @@ function App() {
         stats={stats}
         isOpen={isDashboardOpen}
         onClose={() => setIsDashboardOpen(false)}
+        isGuest={isGuest}
       />
     </div>
   );
