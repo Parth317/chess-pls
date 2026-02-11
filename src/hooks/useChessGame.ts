@@ -9,6 +9,7 @@ export interface GameStats {
     wins: number;
     losses: number;
     draws: number;
+    losingStreak: number;
 }
 
 const INITIAL_STATS: GameStats = {
@@ -17,6 +18,7 @@ const INITIAL_STATS: GameStats = {
     wins: 0,
     losses: 0,
     draws: 0,
+    losingStreak: 0,
 };
 
 export function useChessGame() {
@@ -29,17 +31,29 @@ export function useChessGame() {
     // Persisted Stats
     const [stats, setStats] = useState<GameStats>(() => {
         const saved = localStorage.getItem('gambit_stats');
-        return saved ? JSON.parse(saved) : INITIAL_STATS;
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            // Migration: Ensure losingStreak exists
+            return { ...INITIAL_STATS, ...parsed };
+        }
+        return INITIAL_STATS;
     });
 
     // Initialize Stockfish & Listen for Evals
     useEffect(() => {
-        stockfish.setElo(stats.botRating);
+        // Apply handicap if on a losing streak
+        // Drop effective Elo by 50 for each consecutive loss
+        const handicap = stats.losingStreak * 50;
+        const effectiveElo = Math.max(400, stats.botRating - handicap);
+
+        console.log(`[Difficulty] Bot Rating: ${stats.botRating}, Streak: ${stats.losingStreak}, Effective Elo: ${effectiveElo}`);
+
+        stockfish.setElo(effectiveElo);
 
         stockfish.onEvaluation = (evalData) => {
             setEvaluation(evalData);
         };
-    }, [stats.botRating]);
+    }, [stats.botRating, stats.losingStreak]);
 
     // Continuous Analysis Loop
     useEffect(() => {
@@ -67,15 +81,20 @@ export function useChessGame() {
         setStats(prev => {
             let newUser = prev.rating;
             let newBot = prev.botRating;
+            let newStreak = prev.losingStreak;
 
             if (result === 'win') {
                 newUser += 25;
                 newBot += 25;
+                newStreak = 0;
             } else if (result === 'loss') {
                 newUser = Math.max(0, newUser - 25);
-                newBot = Math.max(800, newBot - 10);
+                // Drop bot rating faster on loss (was -10, now -25 to match user)
+                newBot = Math.max(400, newBot - 25);
+                newStreak += 1;
+            } else {
+                newStreak = 0; // Reset streak on draw
             }
-            // Draw = no change
 
             const newStats = {
                 ...prev,
@@ -84,6 +103,7 @@ export function useChessGame() {
                 wins: result === 'win' ? prev.wins + 1 : prev.wins,
                 losses: result === 'loss' ? prev.losses + 1 : prev.losses,
                 draws: result === 'draw' ? prev.draws + 1 : prev.draws,
+                losingStreak: newStreak,
             };
 
             // Sync to Supabase if logged in

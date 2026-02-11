@@ -60,7 +60,7 @@ class StockfishWorker {
     }
 
     public setElo(elo: number) {
-        let skill = Math.round((Math.max(800, Math.min(elo, 3000)) - 800) / 110);
+        let skill = Math.round((Math.max(400, Math.min(elo, 3000)) - 400) / 110);
         skill = Math.max(0, Math.min(20, skill));
 
         this.worker.postMessage(`setoption name Skill Level value ${skill}`);
