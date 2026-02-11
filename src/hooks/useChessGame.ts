@@ -49,18 +49,24 @@ export function useChessGame() {
     const [stats, setStats] = useState<GameStats>(() => {
         const saved = localStorage.getItem('gambit_stats');
         if (saved) {
-            const parsed = JSON.parse(saved);
-            // Migration: Ensure new fields exist
-            return {
-                ...INITIAL_STATS,
-                ...parsed,
-                bullet: parsed.bullet || { ...DEFAULT_CATEGORY_STATS },
-                blitz: parsed.blitz || { ...DEFAULT_CATEGORY_STATS },
-                rapid: parsed.rapid || { ...DEFAULT_CATEGORY_STATS },
-                classical: parsed.classical || { ...DEFAULT_CATEGORY_STATS },
-                // If legacy rating exists but sub-stats don't, maybe seed them? 
-                // For now, start fresh categories at 1200 or preserve aggregate.
-            };
+            try {
+                const parsed = JSON.parse(saved);
+                const legacyRating = parsed.rating || 1200;
+                // Seed helper: if specific category exists, use it; otherwise use legacy rating as seed
+                const seed = (existing: any) => existing ? existing : { ...DEFAULT_CATEGORY_STATS, rating: legacyRating };
+
+                return {
+                    ...INITIAL_STATS,
+                    ...parsed,
+                    bullet: seed(parsed.bullet),
+                    blitz: seed(parsed.blitz),
+                    rapid: seed(parsed.rapid),
+                    classical: seed(parsed.classical),
+                };
+            } catch (e) {
+                console.error("Failed to parse saved stats:", e);
+                return INITIAL_STATS;
+            }
         }
         return INITIAL_STATS;
     });
