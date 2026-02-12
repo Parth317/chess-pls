@@ -257,21 +257,25 @@
 /* Blue (Default override or standard) */
 .cg-wrap.board-blue cg-board {
     background-image: url('https://lichess1.org/assets/images/board/blue.svg');
+    background-size: cover;
 }
 
 /* Green */
 .cg-wrap.board-green cg-board {
     background-image: url('https://lichess1.org/assets/images/board/green.svg');
+    background-size: cover;
 }
 
 /* Brown (Wood) */
 .cg-wrap.board-brown cg-board {
     background-image: url('https://lichess1.org/assets/images/board/wood4.jpg');
+    background-size: cover;
 }
 
 /* Purple */
 .cg-wrap.board-purple cg-board {
     background-image: url('https://lichess1.org/assets/images/board/purple.svg');
+    background-size: cover;
 }
 
 /* Slate (Flat) */
