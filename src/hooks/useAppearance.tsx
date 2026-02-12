@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export type BoardTheme = 'blue' | 'green' | 'brown' | 'purple' | 'slate';
-export type PieceTheme = 'cburnett' | 'merida' | 'alpha' | 'cheq' | 'maestro';
+export type PieceTheme = 'cburnett' | 'merida' | 'alpha' | 'california' | 'maestro';
 export type AppBackground = 'dark' | 'light' | 'space' | 'nature' | 'abstract';
 
 interface AppearanceState {
@@ -60,17 +60,17 @@ export function AppearanceProvider({ children }: { children: React.ReactNode }) 
     }, [appBackground]);
 
     return (
-        <AppearanceContext.Provider value= {{
-        boardTheme,
+        <AppearanceContext.Provider value={{
+            boardTheme,
             pieceTheme,
             appBackground,
             setBoardTheme,
             setPieceTheme,
             setAppBackground
-    }
-}>
-    { children }
-    </AppearanceContext.Provider>
+        }
+        }>
+            {children}
+        </AppearanceContext.Provider>
     );
 }
 

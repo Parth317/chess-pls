@@ -130,63 +130,64 @@
 }
 
 /* Cheq */
-.cg-wrap.piece-cheq piece.pawn.white {
-    background-image: url('https://lichess1.org/assets/piece/cheq/wP.svg');
+/* California (Modern) */
+.cg-wrap.piece-california piece.pawn.white {
+    background-image: url('https://lichess1.org/assets/piece/california/wP.svg');
     background-size: 100% 100%;
 }
 
-.cg-wrap.piece-cheq piece.knight.white {
-    background-image: url('https://lichess1.org/assets/piece/cheq/wN.svg');
+.cg-wrap.piece-california piece.knight.white {
+    background-image: url('https://lichess1.org/assets/piece/california/wN.svg');
     background-size: 100% 100%;
 }
 
-.cg-wrap.piece-cheq piece.bishop.white {
-    background-image: url('https://lichess1.org/assets/piece/cheq/wB.svg');
+.cg-wrap.piece-california piece.bishop.white {
+    background-image: url('https://lichess1.org/assets/piece/california/wB.svg');
     background-size: 100% 100%;
 }
 
-.cg-wrap.piece-cheq piece.rook.white {
-    background-image: url('https://lichess1.org/assets/piece/cheq/wR.svg');
+.cg-wrap.piece-california piece.rook.white {
+    background-image: url('https://lichess1.org/assets/piece/california/wR.svg');
     background-size: 100% 100%;
 }
 
-.cg-wrap.piece-cheq piece.queen.white {
-    background-image: url('https://lichess1.org/assets/piece/cheq/wQ.svg');
+.cg-wrap.piece-california piece.queen.white {
+    background-image: url('https://lichess1.org/assets/piece/california/wQ.svg');
     background-size: 100% 100%;
 }
 
-.cg-wrap.piece-cheq piece.king.white {
-    background-image: url('https://lichess1.org/assets/piece/cheq/wK.svg');
+.cg-wrap.piece-california piece.king.white {
+    background-image: url('https://lichess1.org/assets/piece/california/wK.svg');
     background-size: 100% 100%;
 }
 
-.cg-wrap.piece-cheq piece.pawn.black {
-    background-image: url('https://lichess1.org/assets/piece/cheq/bP.svg');
+.cg-wrap.piece-california piece.pawn.black {
+    background-image: url('https://lichess1.org/assets/piece/california/bP.svg');
     background-size: 100% 100%;
 }
 
-.cg-wrap.piece-cheq piece.knight.black {
-    background-image: url('https://lichess1.org/assets/piece/cheq/bN.svg');
+.cg-wrap.piece-california piece.knight.black {
+    background-image: url('https://lichess1.org/assets/piece/california/bN.svg');
     background-size: 100% 100%;
 }
 
-.cg-wrap.piece-cheq piece.bishop.black {
-    background-image: url('https://lichess1.org/assets/piece/cheq/bB.svg');
+.cg-wrap.piece-california piece.bishop.black {
+    background-image: url('https://lichess1.org/assets/piece/california/bB.svg');
     background-size: 100% 100%;
 }
 
-.cg-wrap.piece-cheq piece.rook.black {
-    background-image: url('https://lichess1.org/assets/piece/cheq/bR.svg');
+.cg-wrap.piece-california piece.rook.black {
+    background-image: url('https://lichess1.org/assets/piece/california/bR.svg');
     background-size: 100% 100%;
 }
 
-.cg-wrap.piece-cheq piece.queen.black {
-    background-image: url('https://lichess1.org/assets/piece/cheq/bQ.svg');
+.cg-wrap.piece-california piece.queen.black {
+    background-image: url('https://lichess1.org/assets/piece/california/bQ.svg');
     background-size: 100% 100%;
 }
 
-.cg-wrap.piece-cheq piece.king.black {
-    background-image: url('https://lichess1.org/assets/piece/cheq/bK.svg');
+.cg-wrap.piece-california piece.king.black {
+    background-image: url('https://lichess1.org/assets/piece/california/bK.svg');
     background-size: 100% 100%;
 }
 

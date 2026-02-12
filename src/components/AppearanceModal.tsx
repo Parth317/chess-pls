@@ -36,7 +36,7 @@ export default function AppearanceModal({ isOpen, onClose }: AppearanceModalProp
         { id: 'cburnett', label: 'Standard' },
         { id: 'merida', label: 'Classic' },
         { id: 'alpha', label: 'Simple' },
-        { id: 'cheq', label: 'Modern' },
+        { id: 'california', label: 'Modern' },
         { id: 'maestro', label: 'Retro' },
     ];
 
