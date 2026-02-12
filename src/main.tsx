@@ -11,25 +11,29 @@ import ProfilePage from './pages/ProfilePage.tsx'
 import ResetPassword from './pages/ResetPassword.tsx'
 import { AuthGuard } from './auth/AuthGuard.tsx'
 
+import { AppearanceProvider } from './hooks/useAppearance.ts'
+
 createRoot(document.getElementById('root')!).render(
   <ErrorBoundary>
-    <HashRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          {/* Public Routes */}
-          <Route path="/game" element={<GamePage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+    <AppearanceProvider>
+      <HashRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            {/* Public Routes */}
+            <Route path="/game" element={<GamePage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
-          {/* Redirect root to game (public now) */}
-          <Route path="/" element={<Navigate to="/game" replace />} />
+            {/* Redirect root to game (public now) */}
+            <Route path="/" element={<Navigate to="/game" replace />} />
 
-          {/* Protected Routes */}
-          <Route element={<AuthGuard />}>
-            <Route path="/profile" element={<ProfilePage />} />
+            {/* Protected Routes */}
+            <Route element={<AuthGuard />}>
+              <Route path="/profile" element={<ProfilePage />} />
+            </Route>
           </Route>
-        </Route>
-      </Routes>
-    </HashRouter>
+        </Routes>
+      </HashRouter>
+    </AppearanceProvider>
   </ErrorBoundary>
 )

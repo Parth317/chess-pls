@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export type BoardTheme = 'blue' | 'green' | 'brown' | 'purple' | 'slate';
 export type PieceTheme = 'cburnett' | 'merida' | 'alpha' | 'cheq' | 'maestro';
@@ -19,7 +19,9 @@ const DEFAULT_STATE: Omit<AppearanceState, 'setBoardTheme' | 'setPieceTheme' | '
     appBackground: 'dark',
 };
 
-export function useAppearance(): AppearanceState {
+const AppearanceContext = createContext<AppearanceState | undefined>(undefined);
+
+export function AppearanceProvider({ children }: { children: React.ReactNode }) {
     const [boardTheme, setBoardTheme] = useState<BoardTheme>(() => {
         const saved = localStorage.getItem('gambit_board_theme');
         return (saved as BoardTheme) || DEFAULT_STATE.boardTheme;
@@ -49,16 +51,33 @@ export function useAppearance(): AppearanceState {
         // Apply global background
         const root = document.getElementById('root');
         if (root) {
-            root.className = `min-h-screen font-sans selection:bg-blue-500/30 app-bg-${appBackground}`;
+            // Remove all existing app-bg- classes to prevent stacking or conflicts
+            root.classList.remove('app-bg-dark', 'app-bg-light', 'app-bg-space', 'app-bg-nature', 'app-bg-abstract');
+
+            // Add global classes
+            root.classList.add('min-h-screen', 'font-sans', 'selection:bg-blue-500/30', `app-bg-${appBackground}`);
         }
     }, [appBackground]);
 
-    return {
+    return (
+        <AppearanceContext.Provider value= {{
         boardTheme,
-        pieceTheme,
-        appBackground,
-        setBoardTheme,
-        setPieceTheme,
-        setAppBackground,
-    };
+            pieceTheme,
+            appBackground,
+            setBoardTheme,
+            setPieceTheme,
+            setAppBackground
+    }
+}>
+    { children }
+    </AppearanceContext.Provider>
+    );
+}
+
+export function useAppearance(): AppearanceState {
+    const context = useContext(AppearanceContext);
+    if (context === undefined) {
+        throw new Error('useAppearance must be used within an AppearanceProvider');
+    }
+    return context;
 }
