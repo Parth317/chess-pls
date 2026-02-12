@@ -418,27 +418,32 @@
     background-color: transparent;
 }
 
+/* Space: Deep radial gradient (Blue/Black) */
 .app-bg-space {
     background-color: #0f172a;
-    background-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5980?auto=format&fit=crop&q=80');
+    background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 60%, #020617 100%);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
 }
 
+/* Stars overlay pattern */
 .app-bg-space::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(15, 23, 42, 0.7);
-    /* Overlay to ensure readability */
+    background-image: radial-gradient(white 1px, transparent 1px), radial-gradient(white 1px, transparent 1px);
+    background-size: 50px 50px, 30px 30px;
+    background-position: 0 0, 25px 25px;
+    opacity: 0.1;
     z-index: -1;
     pointer-events: none;
 }
 
+/* Nature: Linear gradient (Green/Teal) */
 .app-bg-nature {
     background-color: #064e3b;
-    background-image: url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&q=80');
+    background-image: linear-gradient(135deg, #064e3b 0%, #0f766e 50%, #115e59 100%);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -448,24 +453,26 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(6, 78, 59, 0.8);
+    /* Subtle texture overlay could go here, but gradient is sufficient */
+    background: radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.1) 0%, transparent 40%);
     z-index: -1;
     pointer-events: none;
 }
 
+/* Abstract: Conic/Mesh gradient (Purple/Dark) */
 .app-bg-abstract {
     background-color: #4c1d95;
-    background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80');
+    background-image:
+        radial-gradient(at 0% 0%, rgba(76, 29, 149, 0.5) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(219, 39, 119, 0.3) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(79, 70, 229, 0.3) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(124, 58, 237, 0.5) 0px, transparent 50%),
+        linear-gradient(to bottom right, #1e1b4b, #312e81);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
 }
 
 .app-bg-abstract::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(76, 29, 149, 0.85);
-    z-index: -1;
-    pointer-events: none;
+    content: none;
 }
