@@ -254,34 +254,34 @@
 
 /* --- Board Themes --- */
 
-/* Blue (Default override or standard) */
+/* Blue (Standard) */
 .cg-wrap.board-blue cg-board {
-    background-image: url('https://lichess1.org/assets/images/board/blue.svg');
-    background-size: cover;
+    background-image: conic-gradient(#dee3e6 90deg, #8ca2ad 90deg 180deg, #dee3e6 180deg 270deg, #8ca2ad 270deg) !important;
+    background-size: 25% 25% !important;
 }
 
 /* Green */
 .cg-wrap.board-green cg-board {
-    background-image: url('https://lichess1.org/assets/images/board/green.svg');
-    background-size: cover;
+    background-image: conic-gradient(#ffffdd 90deg, #86a666 90deg 180deg, #ffffdd 180deg 270deg, #86a666 270deg) !important;
+    background-size: 25% 25% !important;
 }
 
-/* Brown (Wood) */
+/* Brown (Wood - Simulated) */
 .cg-wrap.board-brown cg-board {
-    background-image: url('https://lichess1.org/assets/images/board/wood4.jpg');
-    background-size: cover;
+    background-image: conic-gradient(#f0d9b5 90deg, #b58863 90deg 180deg, #f0d9b5 180deg 270deg, #b58863 270deg) !important;
+    background-size: 25% 25% !important;
 }
 
 /* Purple */
 .cg-wrap.board-purple cg-board {
-    background-image: url('https://lichess1.org/assets/images/board/purple.svg');
-    background-size: cover;
+    background-image: conic-gradient(#9f90b0 90deg, #7d4a8d 90deg 180deg, #9f90b0 180deg 270deg, #7d4a8d 270deg) !important;
+    background-size: 25% 25% !important;
 }
 
 /* Slate (Flat) */
 .cg-wrap.board-slate cg-board {
-    background-image: none;
-    background-color: #334155;
+    background-image: none !important;
+    background-color: #334155 !important;
     /* Slate-700 */
 }
 
@@ -307,41 +307,57 @@
 /* --- Global Light Theme Overrides --- */
 /* We target utility classes used in components to swap them for light mode equivalents */
 
-/* Backgrounds */
+/* Backgrounds - Opacity Handling is Critical */
 .app-bg-light .bg-slate-900,
 .app-bg-light .bg-slate-950 {
     background-color: #f1f5f9;
-    /* Slate-100 - Main BG */
+    /* Slate-100 */
+}
+
+.app-bg-light .bg-slate-900\/50,
+.app-bg-light .bg-slate-950\/50 {
+    background-color: rgba(241, 245, 249, 0.5);
+    /* Slate-100/50 */
 }
 
 .app-bg-light .bg-slate-800 {
     background-color: #ffffff;
-    /* White - Panels/Cards */
+    /* White */
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+}
+
+.app-bg-light .bg-slate-800\/50,
+.app-bg-light .bg-slate-800\/30 {
+    background-color: #f8fafc;
+    /* Slate-50 - A slight shade for headers inside cards */
 }
 
 .app-bg-light .bg-slate-700 {
     background-color: #e2e8f0;
-    /* Slate-200 - Secondary/Interactive */
+    /* Slate-200 */
     color: #334155;
     /* Slate-700 */
 }
 
-.app-bg-light .hover\:bg-slate-700:hover {
-    background-color: #e2e8f0;
-}
-
 .app-bg-light .bg-slate-700\/50 {
-    background-color: #e2e8f080;
+    background-color: #f1f5f9;
+    /* Slate-100 */
 }
 
 .app-bg-light .bg-slate-700\/30 {
-    background-color: #e2e8f050;
+    background-color: #f8fafc;
+    /* Slate-50 */
+}
+
+.app-bg-light .hover\:bg-slate-700:hover {
+    background-color: #cbd5e1;
+    /* Hover effect */
 }
 
 .app-bg-light .hover\:bg-slate-600:hover {
-    background-color: #cbd5e1;
-    /* Slate-300 - Hover state */
+    background-color: #94a3b8;
+    /* Slate-400 */
+    color: #ffffff;
 }
 
 /* Borders */
@@ -359,7 +375,11 @@
     /* Slate-900 */
 }
 
-.app-bg-light .text-slate-300,
+.app-bg-light .text-slate-300 {
+    color: #334155;
+    /* Slate-700 */
+}
+
 .app-bg-light .text-slate-400 {
     color: #475569;
     /* Slate-600 */
@@ -367,7 +387,7 @@
 
 .app-bg-light .text-slate-500 {
     color: #64748b;
-    /* Slate-500 - Keep similar */
+    /* Slate-500 */
 }
 
 /* Input Specifics */
@@ -386,8 +406,7 @@
 /* Modal Backdrops */
 .app-bg-light .bg-slate-900\/80,
 .app-bg-light .bg-slate-900\/90 {
-    background-color: rgba(241, 245, 249, 0.85);
-    /* Light slate backdrop */
+    background-color: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(8px);
 }
 
