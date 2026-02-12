@@ -71,148 +71,184 @@
 /* Alpha */
 .cg-wrap.piece-alpha piece.pawn.white {
     background-image: url('https://lichess1.org/assets/piece/alpha/wP.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-alpha piece.knight.white {
     background-image: url('https://lichess1.org/assets/piece/alpha/wN.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-alpha piece.bishop.white {
     background-image: url('https://lichess1.org/assets/piece/alpha/wB.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-alpha piece.rook.white {
     background-image: url('https://lichess1.org/assets/piece/alpha/wR.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-alpha piece.queen.white {
     background-image: url('https://lichess1.org/assets/piece/alpha/wQ.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-alpha piece.king.white {
     background-image: url('https://lichess1.org/assets/piece/alpha/wK.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-alpha piece.pawn.black {
     background-image: url('https://lichess1.org/assets/piece/alpha/bP.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-alpha piece.knight.black {
     background-image: url('https://lichess1.org/assets/piece/alpha/bN.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-alpha piece.bishop.black {
     background-image: url('https://lichess1.org/assets/piece/alpha/bB.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-alpha piece.rook.black {
     background-image: url('https://lichess1.org/assets/piece/alpha/bR.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-alpha piece.queen.black {
     background-image: url('https://lichess1.org/assets/piece/alpha/bQ.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-alpha piece.king.black {
     background-image: url('https://lichess1.org/assets/piece/alpha/bK.svg');
+    background-size: 100% 100%;
 }
 
 /* Cheq */
 .cg-wrap.piece-cheq piece.pawn.white {
     background-image: url('https://lichess1.org/assets/piece/cheq/wP.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-cheq piece.knight.white {
     background-image: url('https://lichess1.org/assets/piece/cheq/wN.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-cheq piece.bishop.white {
     background-image: url('https://lichess1.org/assets/piece/cheq/wB.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-cheq piece.rook.white {
     background-image: url('https://lichess1.org/assets/piece/cheq/wR.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-cheq piece.queen.white {
     background-image: url('https://lichess1.org/assets/piece/cheq/wQ.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-cheq piece.king.white {
     background-image: url('https://lichess1.org/assets/piece/cheq/wK.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-cheq piece.pawn.black {
     background-image: url('https://lichess1.org/assets/piece/cheq/bP.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-cheq piece.knight.black {
     background-image: url('https://lichess1.org/assets/piece/cheq/bN.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-cheq piece.bishop.black {
     background-image: url('https://lichess1.org/assets/piece/cheq/bB.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-cheq piece.rook.black {
     background-image: url('https://lichess1.org/assets/piece/cheq/bR.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-cheq piece.queen.black {
     background-image: url('https://lichess1.org/assets/piece/cheq/bQ.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-cheq piece.king.black {
     background-image: url('https://lichess1.org/assets/piece/cheq/bK.svg');
+    background-size: 100% 100%;
 }
 
 /* Maestro */
 .cg-wrap.piece-maestro piece.pawn.white {
     background-image: url('https://lichess1.org/assets/piece/maestro/wP.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-maestro piece.knight.white {
     background-image: url('https://lichess1.org/assets/piece/maestro/wN.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-maestro piece.bishop.white {
     background-image: url('https://lichess1.org/assets/piece/maestro/wB.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-maestro piece.rook.white {
     background-image: url('https://lichess1.org/assets/piece/maestro/wR.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-maestro piece.queen.white {
     background-image: url('https://lichess1.org/assets/piece/maestro/wQ.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-maestro piece.king.white {
     background-image: url('https://lichess1.org/assets/piece/maestro/wK.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-maestro piece.pawn.black {
     background-image: url('https://lichess1.org/assets/piece/maestro/bP.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-maestro piece.knight.black {
     background-image: url('https://lichess1.org/assets/piece/maestro/bN.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-maestro piece.bishop.black {
     background-image: url('https://lichess1.org/assets/piece/maestro/bB.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-maestro piece.rook.black {
     background-image: url('https://lichess1.org/assets/piece/maestro/bR.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-maestro piece.queen.black {
     background-image: url('https://lichess1.org/assets/piece/maestro/bQ.svg');
+    background-size: 100% 100%;
 }
 
 .cg-wrap.piece-maestro piece.king.black {
     background-image: url('https://lichess1.org/assets/piece/maestro/bK.svg');
+    background-size: 100% 100%;
 }
 
 
