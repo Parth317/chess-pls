@@ -11,7 +11,7 @@ import ProfilePage from './pages/ProfilePage.tsx'
 import ResetPassword from './pages/ResetPassword.tsx'
 import { AuthGuard } from './auth/AuthGuard.tsx'
 
-import { AppearanceProvider } from './hooks/useAppearance.ts'
+import { AppearanceProvider } from './hooks/useAppearance'
 
 createRoot(document.getElementById('root')!).render(
   <ErrorBoundary>
