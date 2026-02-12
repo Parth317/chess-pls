@@ -9,9 +9,11 @@ interface Props {
     onMove: (from: string, to: string) => void;
     orientation?: 'white' | 'black';
     lastMove?: [string, string];
+    boardTheme?: string;
+    pieceTheme?: string;
 }
 
-export default function ChessgroundBoard({ game, onMove, orientation = 'white', lastMove }: Props) {
+export default function ChessgroundBoard({ game, onMove, orientation = 'white', lastMove, boardTheme = 'blue', pieceTheme = 'cburnett' }: Props) {
     const ref = useRef<HTMLDivElement>(null);
     const [api, setApi] = useState<Api | null>(null);
     const onMoveRef = useRef(onMove);
@@ -80,7 +82,7 @@ export default function ChessgroundBoard({ game, onMove, orientation = 'white', 
             <div
                 ref={ref}
                 style={{ height: '100%', width: '100%' }}
-                className="cg-wrap"
+                className={`cg-wrap board-${boardTheme} piece-${pieceTheme}`}
             />
         </div>
     );

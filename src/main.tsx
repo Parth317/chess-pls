@@ -1,6 +1,8 @@
 import { createRoot } from 'react-dom/client'
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './index.css'
+import './board.css'; // Ensure base board styles are loaded
+import './themes.css'; // Theme overrides
 import { ErrorBoundary } from './components/ErrorBoundary.tsx'
 import Layout from './components/Layout.tsx'
 import Login from './pages/Login.tsx'
