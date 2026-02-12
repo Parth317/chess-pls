@@ -6,17 +6,21 @@ import Dashboard from '../components/Dashboard';
 import MoveHistory from '../components/MoveHistory';
 import { useChessGame } from '../hooks/useChessGame';
 import { useGameClock } from '../hooks/useGameClock';
-import { Play, RotateCcw, BarChart3, AlertTriangle, LogOut } from 'lucide-react';
+import { useAppearance } from '../hooks/useAppearance';
+import AppearanceModal from '../components/AppearanceModal';
+import { Play, RotateCcw, BarChart3, AlertTriangle, LogOut, Palette } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 
 export default function GamePage() {
   const { game, fen, makeMove, resetGame, isBotThinking, gameResult, stats } = useChessGame();
   const { signOut, user } = useAuth();
+  const { boardTheme, pieceTheme } = useAppearance();
   const [username, setUsername] = useState<string | null>(null);
   const [timeControl, setTimeControl] = useState<{ limit: number; increment: number } | null>(null);
   const [menuView, setMenuView] = useState<'main' | 'timed'>('main');
   const [isMenuOpen, setIsMenuOpen] = useState(true); // Default to open
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+  const [isAppearanceOpen, setIsAppearanceOpen] = useState(false);
   const [gameOverReason, setGameOverReason] = useState<string | null>(null);
 
   // Fetch username
@@ -198,7 +202,10 @@ export default function GamePage() {
                       addTime(currentTurn, timeControl.increment);
                     }
                   }
+                }
                 }}
+              boardTheme={boardTheme}
+              pieceTheme={pieceTheme}
               />
 
               {/* Game Setup Modal (Embedded) */}
@@ -309,18 +316,24 @@ export default function GamePage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-2 shrink-0">
+            <div className="grid grid-cols-3 gap-2 shrink-0">
               <button
                 onClick={handleRestart}
                 className="py-3 bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
               >
-                <RotateCcw className="w-4 h-4" /> Restart
+                <RotateCcw className="w-4 h-4" /> <span className="hidden xl:inline">Restart</span>
               </button>
               <button
                 onClick={() => setIsDashboardOpen(true)}
                 className="py-3 bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
               >
-                <BarChart3 className="w-4 h-4" /> Stats
+                <BarChart3 className="w-4 h-4" /> <span className="hidden xl:inline">Stats</span>
+              </button>
+              <button
+                onClick={() => setIsAppearanceOpen(true)}
+                className="py-3 bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+              >
+                <Palette className="w-4 h-4" /> <span className="hidden xl:inline">Theme</span>
               </button>
             </div>
           )}
@@ -344,6 +357,11 @@ export default function GamePage() {
         isOpen={isDashboardOpen}
         onClose={() => setIsDashboardOpen(false)}
         isGuest={isGuest}
+      />
+
+      <AppearanceModal
+        isOpen={isAppearanceOpen}
+        onClose={() => setIsAppearanceOpen(false)}
       />
     </div>
   );
