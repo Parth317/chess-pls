@@ -462,20 +462,21 @@
     pointer-events: none;
 }
 
-/* Abstract: Conic/Mesh gradient (Purple/Dark) */
+/* Abstract: Restore Image with heavy overlay */
 .app-bg-abstract {
     background-color: #4c1d95;
-    background-image:
-        radial-gradient(at 0% 0%, rgba(76, 29, 149, 0.5) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(219, 39, 119, 0.3) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(79, 70, 229, 0.3) 0px, transparent 50%),
-        radial-gradient(at 0% 100%, rgba(124, 58, 237, 0.5) 0px, transparent 50%),
-        linear-gradient(to bottom right, #1e1b4b, #312e81);
+    background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
 }
 
 .app-bg-abstract::before {
-    content: none;
+    content: '';
+    position: absolute;
+    inset: 0;
+    /* Heavy purple overlay to ensure text readability */
+    background: rgba(76, 29, 149, 0.85);
+    z-index: -1;
+    pointer-events: none;
 }
