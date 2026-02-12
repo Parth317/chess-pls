@@ -294,10 +294,102 @@
 }
 
 .app-bg-light {
-    background-color: #f8fafc;
-    /* Slate-50 */
+    background-color: #f1f5f9;
+    /* Slate-100 */
+    color: #0f172a;
+    /* Slate-900 */
+}
+
+/* --- Global Light Theme Overrides --- */
+/* We target utility classes used in components to swap them for light mode equivalents */
+
+/* Backgrounds */
+.app-bg-light .bg-slate-900,
+.app-bg-light .bg-slate-950 {
+    background-color: #f1f5f9;
+    /* Slate-100 - Main BG */
+}
+
+.app-bg-light .bg-slate-800 {
+    background-color: #ffffff;
+    /* White - Panels/Cards */
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+}
+
+.app-bg-light .bg-slate-700 {
+    background-color: #e2e8f0;
+    /* Slate-200 - Secondary/Interactive */
+    color: #334155;
+    /* Slate-700 */
+}
+
+.app-bg-light .hover\:bg-slate-700:hover {
+    background-color: #e2e8f0;
+}
+
+.app-bg-light .bg-slate-700\/50 {
+    background-color: #e2e8f080;
+}
+
+.app-bg-light .bg-slate-700\/30 {
+    background-color: #e2e8f050;
+}
+
+.app-bg-light .hover\:bg-slate-600:hover {
+    background-color: #cbd5e1;
+    /* Slate-300 - Hover state */
+}
+
+/* Borders */
+.app-bg-light .border-slate-700,
+.app-bg-light .border-slate-700\/50,
+.app-bg-light .border-slate-800 {
+    border-color: #cbd5e1;
+    /* Slate-300 */
+}
+
+/* Text Colors */
+.app-bg-light .text-white,
+.app-bg-light .text-slate-200 {
+    color: #0f172a;
+    /* Slate-900 */
+}
+
+.app-bg-light .text-slate-300,
+.app-bg-light .text-slate-400 {
+    color: #475569;
+    /* Slate-600 */
+}
+
+.app-bg-light .text-slate-500 {
+    color: #64748b;
+    /* Slate-500 - Keep similar */
+}
+
+/* Input Specifics */
+.app-bg-light input,
+.app-bg-light select,
+.app-bg-light textarea {
+    background-color: #ffffff;
+    border-color: #cbd5e1;
     color: #0f172a;
 }
+
+.app-bg-light input::placeholder {
+    color: #94a3b8;
+}
+
+/* Modal Backdrops */
+.app-bg-light .bg-slate-900\/80,
+.app-bg-light .bg-slate-900\/90 {
+    background-color: rgba(241, 245, 249, 0.85);
+    /* Light slate backdrop */
+    backdrop-filter: blur(8px);
+}
+
+/* Special Logic for "Dark" elements that should stay dark even in light mode? 
+   No, Lichess usually inverts everything except the board itself. 
+*/
 
 .app-bg-light main {
     background-color: transparent;
