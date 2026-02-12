@@ -279,11 +279,12 @@
     background-size: 25% 25% !important;
 }
 
-/* Slate (Flat) */
+/* Slate (Flat - Checkerboard Pattern) */
 .cg-wrap.board-slate cg-board {
-    background-image: none !important;
+    /* Low contrast modern slate */
+    background-image: conic-gradient(#cbd5e1 90deg, #64748b 90deg 180deg, #cbd5e1 180deg 270deg, #64748b 270deg) !important;
+    background-size: 25% 25% !important;
     background-color: #334155 !important;
-    /* Slate-700 */
 }
 
 .cg-wrap.board-slate cg-board square.move-dest {
@@ -441,10 +442,11 @@
     pointer-events: none;
 }
 
-/* Nature: Linear gradient (Green/Teal) */
+/* Nature: Restore Image as primary, keep reliable fallback color */
 .app-bg-nature {
     background-color: #064e3b;
-    background-image: linear-gradient(135deg, #064e3b 0%, #0f766e 50%, #115e59 100%);
+    /* Use reliable Unsplash source with specific ID */
+    background-image: url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&q=80');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -454,8 +456,8 @@
     content: '';
     position: absolute;
     inset: 0;
-    /* Subtle texture overlay could go here, but gradient is sufficient */
-    background: radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.1) 0%, transparent 40%);
+    /* Overlay for readability */
+    background: rgba(6, 78, 59, 0.4);
     z-index: -1;
     pointer-events: none;
 }
