@@ -202,10 +202,9 @@ export default function GamePage() {
                       addTime(currentTurn, timeControl.increment);
                     }
                   }
-                }
                 }}
-              boardTheme={boardTheme}
-              pieceTheme={pieceTheme}
+                boardTheme={boardTheme}
+                pieceTheme={pieceTheme}
               />
 
               {/* Game Setup Modal (Embedded) */}

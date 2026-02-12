@@ -1,5 +1,6 @@
 import { X, Check } from 'lucide-react';
-import { useAppearance, BoardTheme, PieceTheme, AppBackground } from '../hooks/useAppearance';
+import { useAppearance } from '../hooks/useAppearance';
+import type { BoardTheme, PieceTheme, AppBackground } from '../hooks/useAppearance';
 
 interface AppearanceModalProps {
     isOpen: boolean;
