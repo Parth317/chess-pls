@@ -126,7 +126,7 @@ export default function GamePage() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col font-sans selection:bg-blue-500/30 relative">
+    <div className="h-screen w-full flex flex-col font-sans selection:bg-blue-500/30 relative overflow-hidden bg-slate-900">
       <Header
         userElo={stats[currentMode].rating}
         botElo={stats.botRating}
@@ -136,9 +136,9 @@ export default function GamePage() {
       />
 
       {/* Main Content Area - Fill remaining height minus padding on Desktop, Scroll on Mobile */}
-      <main className="flex-1 max-w-6xl mx-auto w-full p-0 lg:p-4 grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-0 lg:gap-4 items-start lg:h-[calc(100vh-80px)] lg:overflow-hidden h-auto">
+      <main className="flex-1 w-full max-w-6xl mx-auto p-0 lg:p-4 grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-0 lg:gap-4 items-start min-h-0 overflow-y-auto lg:overflow-hidden relative z-0">
         {/* Chess Board Area */}
-        <div className="flex flex-col gap-0 lg:gap-2 lg:h-full w-full min-w-0">
+        <div className="flex flex-col gap-0 lg:gap-2 h-full w-full min-w-0 relative">
           {/* HUD / Clock Bar - Mobile (Flat) and Desktop (Floating) */}
           {/* HUD / Clock Bar - Mobile (Flat) and Desktop (Floating) */}
           <div className="flex justify-between items-center bg-slate-800 px-3 border-b border-slate-700 lg:border lg:rounded-xl lg:shadow-md shrink-0 h-16 lg:h-20">
