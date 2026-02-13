@@ -138,7 +138,7 @@ export default function GamePage() {
       {/* Main Content Area - Fill remaining height minus padding on Desktop, Scroll on Mobile */}
       <main className="flex-1 max-w-6xl mx-auto w-full p-0 lg:p-4 grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-0 lg:gap-4 items-start lg:h-[calc(100vh-80px)] lg:overflow-hidden h-auto">
         {/* Chess Board Area */}
-        <div className="flex flex-col gap-0 lg:gap-2 lg:h-full w-full">
+        <div className="flex flex-col gap-0 lg:gap-2 lg:h-full w-full min-w-0">
           {/* HUD / Clock Bar - Mobile (Flat) and Desktop (Floating) */}
           {/* HUD / Clock Bar - Mobile (Flat) and Desktop (Floating) */}
           <div className="flex justify-between items-center bg-slate-800 px-3 border-b border-slate-700 lg:border lg:rounded-xl lg:shadow-md shrink-0 h-16 lg:h-20">
@@ -167,10 +167,10 @@ export default function GamePage() {
 
 
           {/* The Board - Flexible Height on Desktop, Full Width on Mobile */}
-          <div className="lg:flex-1 lg:min-h-0 w-full flex items-center justify-center bg-slate-900 lg:bg-transparent">
+          <div className="lg:flex-1 lg:min-h-0 w-full flex items-center justify-center bg-slate-900 lg:bg-transparent overflow-hidden">
             <div
               onClick={() => log("Board Container Clicked")}
-              className="aspect-square w-full lg:w-auto lg:h-full lg:max-h-full bg-slate-800 lg:rounded-lg shadow-2xl overflow-hidden border-0 lg:border-4 border-slate-700/50 relative"
+              className="aspect-square w-full lg:w-auto lg:h-full lg:max-h-full lg:max-w-full bg-slate-800 lg:rounded-lg shadow-2xl overflow-hidden border-0 lg:border-4 border-slate-700/50 relative"
             >
               <ChessgroundBoard
                 game={game}
