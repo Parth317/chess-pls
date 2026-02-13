@@ -140,17 +140,18 @@ export default function GamePage() {
         {/* Chess Board Area */}
         <div className="flex flex-col gap-0 lg:gap-2 lg:h-full w-full">
           {/* HUD / Clock Bar - Mobile (Flat) and Desktop (Floating) */}
-          <div className="flex justify-between items-center bg-slate-800 p-2 border-b border-slate-700 lg:border lg:rounded-xl lg:shadow-md shrink-0">
+          {/* HUD / Clock Bar - Mobile (Flat) and Desktop (Floating) */}
+          <div className="flex justify-between items-center bg-slate-800 px-3 border-b border-slate-700 lg:border lg:rounded-xl lg:shadow-md shrink-0 h-16 lg:h-20">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-300">
+              <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-300">
                 SF
               </div>
               <div className="flex flex-col leading-none">
-                <span className="text-sm font-bold text-slate-200">Stockfish</span>
+                <span className="text-sm lg:text-base font-bold text-slate-200">Stockfish</span>
                 <span className="text-xs text-slate-500">Level {Math.round((Math.max(800, stats.botRating) - 800) / 110)}</span>
               </div>
               {isBotThinking && (
-                <span className="ml-2 flex h-2 w-2">
+                <span className="ml-2 flex h-2 w-2 relative">
                   <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-blue-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                 </span>
@@ -158,7 +159,7 @@ export default function GamePage() {
             </div>
 
             {timeControl && (
-              <div className={`font-mono text-xl font-bold lg:px-3 lg:py-1 lg:rounded-md ${game.turn() === 'b' ? 'lg:bg-slate-700 text-white lg:shadow-inner' : 'text-slate-500'}`}>
+              <div className={`font-mono text-xl lg:text-2xl font-bold lg:px-4 lg:py-2 lg:rounded-md transition-colors ${game.turn() === 'b' ? 'lg:bg-slate-700 text-white lg:shadow-inner' : 'text-slate-500'}`}>
                 {formatTime(blackTime)}
               </div>
             )}
@@ -276,13 +277,14 @@ export default function GamePage() {
 
 
           {/* User HUD - Mobile (Flat) and Desktop (Floating) */}
-          <div className="flex justify-between items-center bg-slate-800 p-2 border-b border-t border-slate-700 lg:border lg:rounded-xl lg:shadow-md shrink-0">
+          {/* User HUD - Mobile (Flat) and Desktop (Floating) */}
+          <div className="flex justify-between items-center bg-slate-800 px-3 border-b border-t border-slate-700 lg:border lg:rounded-xl lg:shadow-md shrink-0 h-16 lg:h-20">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold text-white">
+              <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold text-white">
                 {isGuest ? 'G' : 'YOU'}
               </div>
               <div className="flex flex-col leading-none">
-                <span className="text-sm font-bold text-slate-200">
+                <span className="text-sm lg:text-base font-bold text-slate-200">
                   {isGuest ? 'Guest' : (username || (user?.email ? user.email.split('@')[0] : 'You'))}
                 </span>
                 <span className="text-xs text-slate-500">Rating: {isGuest ? 'Unranked' : stats.rating}</span>
@@ -290,7 +292,7 @@ export default function GamePage() {
             </div>
 
             {timeControl && (
-              <div className={`font-mono text-xl font-bold lg:px-3 lg:py-1 lg:rounded-md ${game.turn() === 'w' ? 'lg:bg-white lg:text-slate-900 lg:shadow-inner' : 'text-slate-500'}`}>
+              <div className={`font-mono text-xl lg:text-2xl font-bold lg:px-4 lg:py-2 lg:rounded-md transition-colors ${game.turn() === 'w' ? 'lg:bg-white lg:text-slate-900 lg:shadow-inner' : 'text-slate-500'}`}>
                 {formatTime(whiteTime)}
               </div>
             )}
