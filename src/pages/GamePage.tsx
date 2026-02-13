@@ -167,10 +167,10 @@ export default function GamePage() {
 
 
           {/* The Board - Flexible Height on Desktop, Full Width on Mobile */}
-          <div className="lg:flex-1 lg:min-h-0 w-full flex items-center justify-center bg-slate-900 lg:bg-transparent overflow-hidden lg:p-4">
+          <div className="lg:flex-1 lg:min-h-0 w-full relative bg-slate-900 lg:bg-transparent overflow-hidden">
             <div
               onClick={() => log("Board Container Clicked")}
-              className="aspect-square w-full lg:w-auto lg:h-auto lg:max-h-full lg:max-w-full bg-slate-800 lg:rounded-lg shadow-2xl overflow-hidden border-0 lg:border-4 border-slate-700/50 relative"
+              className="aspect-square w-full lg:w-auto lg:h-full lg:max-h-full lg:max-w-full bg-slate-800 lg:rounded-lg shadow-2xl overflow-hidden border-0 lg:border-4 border-slate-700/50 absolute inset-0 m-auto"
             >
               <ChessgroundBoard
                 game={game}
