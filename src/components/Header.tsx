@@ -15,8 +15,8 @@ export default function Header({ userElo, botElo, onToggleMode, isMenuOpen, isGu
     const difficultyPercent = Math.min(100, Math.max(0, ((botElo - 800) / (3000 - 800)) * 100));
 
     return (
-        <header className="bg-slate-800 border-b border-slate-700 h-auto min-h-[64px] md:h-20 shadow-lg z-[100] flex flex-col justify-center">
-            <div className="max-w-[1920px] mx-auto px-4 flex justify-between items-center h-full">
+        <header className="bg-slate-800 border-b border-slate-700 shrink-0 shadow-lg z-[100] relative">
+            <div className="max-w-[1920px] mx-auto px-4 flex justify-between items-center h-16 md:h-20">
                 {/* Left: Logo & Difficulty Wrapper */}
                 <div className="flex items-center gap-6 md:gap-8">
                     {/* Logo */}
