@@ -47,16 +47,7 @@ export function AppearanceProvider({ children }: { children: React.ReactNode }) 
 
     useEffect(() => {
         localStorage.setItem('gambit_app_background', appBackground);
-
-        // Apply global background
-        const root = document.getElementById('root');
-        if (root) {
-            // Remove all existing app-bg- classes to prevent stacking or conflicts
-            root.classList.remove('app-bg-dark', 'app-bg-light', 'app-bg-space', 'app-bg-nature', 'app-bg-abstract');
-
-            // Add global classes
-            root.classList.add('min-h-screen', 'font-sans', 'selection:bg-blue-500/30', `app-bg-${appBackground}`);
-        }
+        // Theme class application is now handled in Layout.tsx
     }, [appBackground]);
 
     return (
