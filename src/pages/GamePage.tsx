@@ -150,12 +150,7 @@ export default function GamePage() {
                 <span className="text-sm lg:text-base font-bold text-slate-200">Stockfish</span>
                 <span className="text-xs text-slate-500">Level {Math.round((Math.max(800, stats.botRating) - 800) / 110)}</span>
               </div>
-              {isBotThinking && (
-                <span className="ml-2 flex h-2 w-2 relative">
-                  <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-blue-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                </span>
-              )}
+
             </div>
 
             {timeControl && (
