@@ -126,7 +126,7 @@ export default function GamePage() {
   ];
 
   return (
-    <div className="h-screen w-full flex flex-col font-sans selection:bg-blue-500/30 relative overflow-hidden bg-slate-900">
+    <div className="h-screen w-full flex flex-col font-sans selection:bg-blue-500/30 relative overflow-hidden">
       <Header
         userElo={stats[currentMode].rating}
         botElo={stats.botRating}

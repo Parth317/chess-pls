@@ -77,7 +77,7 @@ export default function ProfilePage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-900 text-slate-200 p-8">
+        <div className="min-h-screen text-slate-200 p-8">
             <div className="max-w-2xl mx-auto">
                 <Link to="/game" className="flex items-center gap-2 text-slate-400 hover:text-white mb-8 transition-colors">
                     <ArrowLeft className="w-4 h-4" /> Back to Game
