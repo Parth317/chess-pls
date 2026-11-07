@@ -27,6 +27,9 @@ cg-board {
     user-select: none;
     line-height: 0;
     background-size: cover;
+    /* Prevent the browser from hijacking board touches for scrolling,
+       pull-to-refresh, or swipe navigation while interacting with pieces. */
+    touch-action: none;
 }
 
 .cg-wrap.manipulable cg-board {
@@ -113,6 +116,11 @@ piece.fading {
     padding-right: 2px;
 }
 
+/* Black orientation: ranks run 1..8 top-to-bottom */
+.cg-wrap coords.ranks.black {
+    flex-flow: column;
+}
+
 .cg-wrap coords.files {
     bottom: 0;
     left: 0;
@@ -121,6 +129,11 @@ piece.fading {
     height: 15px;
     text-transform: uppercase;
     text-align: center;
+}
+
+/* Black orientation: files run h..a left-to-right */
+.cg-wrap coords.files.black {
+    flex-flow: row-reverse;
 }
 
 /* Make text visible against board colors if needed, but opacity helps */
@@ -133,6 +146,10 @@ piece.fading {
     flex: 1 1 auto;
 }
 
+.cg-wrap coords.files coord {
+    padding-left: 4px;
+}
+
 /* ==========================================================================
    Theme: Brown Board
    ========================================================================== */
@@ -143,6 +160,22 @@ cg-board {
 
 cg-board square.move-dest {
     background: radial-gradient(rgba(20, 85, 30, 0.5) 19%, rgba(0, 0, 0, 0) 20%);
+}
+
+cg-board square.premove-dest {
+    background: radial-gradient(rgba(20, 30, 85, 0.5) 19%, rgba(0, 0, 0, 0) 20%);
+}
+
+cg-board square.oc.move-dest {
+    background: radial-gradient(transparent 0%, transparent 80%, rgba(20, 85, 0, 0.3) 80%);
+}
+
+cg-board square.oc.premove-dest {
+    background: radial-gradient(transparent 0%, transparent 80%, rgba(20, 30, 85, 0.2) 80%);
+}
+
+cg-board square.current-premove {
+    background-color: rgba(20, 30, 85, 0.5);
 }
 
 cg-board square.last-move {

@@ -33,7 +33,7 @@ export default function Dashboard({ stats, isOpen, onClose, isGuest }: Dashboard
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-md bg-slate-800 h-full shadow-2xl p-6 overflow-y-auto animate-in slide-in-from-right duration-300 border-l border-slate-700 cursor-default"
+                className="w-full max-w-md bg-slate-800 h-full shadow-2xl p-6 overflow-y-auto border-l border-slate-700 cursor-default"
             >
 
                 <div className="flex justify-between items-center mb-8 sticky top-0 bg-slate-800 z-10 py-2 -my-2">
@@ -57,7 +57,7 @@ export default function Dashboard({ stats, isOpen, onClose, isGuest }: Dashboard
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all ${activeTab === tab.id ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-slate-700'}`}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 min-h-11 rounded-lg text-xs font-bold transition-all ${activeTab === tab.id ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-slate-700'}`}
                                 >
                                     <tab.icon className="w-3 h-3" />
                                     <span className="hidden sm:inline">{tab.label}</span>

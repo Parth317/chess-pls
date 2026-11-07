@@ -74,7 +74,7 @@ export default function Login() {
 
     if (!isConfigured) {
         return (
-            <div className="min-h-[80vh] flex flex-col items-center justify-center p-4">
+            <div className="min-h-[80dvh] flex flex-col items-center justify-center p-4">
                 <div className="max-w-md w-full bg-slate-800 p-8 rounded-2xl shadow-2xl border border-red-900/50">
                     <div className="flex items-center gap-3 text-red-500 mb-4">
                         <AlertCircle className="w-8 h-8" />
@@ -122,7 +122,7 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-[80vh] flex flex-col items-center justify-center p-4">
+        <div className="min-h-[80dvh] flex flex-col items-center justify-center p-4">
             <div className="max-w-md w-full bg-slate-800 p-8 rounded-2xl shadow-xl border border-slate-700/50">
                 <div className="text-center mb-8">
                     <div className="flex justify-center mb-4">

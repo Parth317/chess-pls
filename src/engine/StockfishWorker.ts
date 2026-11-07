@@ -8,7 +8,7 @@ export interface Evaluation {
 
 class StockfishWorker {
     private worker: Worker;
-    // @ts-ignore
+    // @ts-expect-error set from the UCI 'uciok' message
     private isReady: boolean = false;
     public onEvaluation: (evalData: Evaluation) => void = () => { };
 

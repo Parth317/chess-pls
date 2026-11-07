@@ -15,14 +15,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [session, setSession] = useState<Session | null>(null);
     const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
     const configured = isSupabaseConfigured();
+    const [loading, setLoading] = useState(configured);
 
     useEffect(() => {
-        if (!configured) {
-            setLoading(false);
-            return;
-        }
+        if (!configured) return;
 
         // Get initial session
         supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
@@ -63,6 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {

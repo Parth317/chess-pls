@@ -7,7 +7,6 @@
 /* Cburnett (Default) - handled in board.css, or override here if needed */
 
 /* Merida */
-/* Merida */
 .cg-wrap.piece-merida piece.pawn.white {
     background-image: url('https://lichess1.org/assets/piece/merida/wP.svg');
     background-size: 100% 100%;
@@ -257,32 +256,32 @@
 
 /* Blue (Standard) */
 .cg-wrap.board-blue cg-board {
-    background-image: conic-gradient(#dee3e6 90deg, #8ca2ad 90deg 180deg, #dee3e6 180deg 270deg, #8ca2ad 270deg) !important;
+    background-image: conic-gradient(#8ca2ad 90deg, #dee3e6 90deg 180deg, #8ca2ad 180deg 270deg, #dee3e6 270deg) !important;
     background-size: 25% 25% !important;
 }
 
 /* Green */
 .cg-wrap.board-green cg-board {
-    background-image: conic-gradient(#ffffdd 90deg, #86a666 90deg 180deg, #ffffdd 180deg 270deg, #86a666 270deg) !important;
+    background-image: conic-gradient(#86a666 90deg, #ffffdd 90deg 180deg, #86a666 180deg 270deg, #ffffdd 270deg) !important;
     background-size: 25% 25% !important;
 }
 
 /* Brown (Wood - Simulated) */
 .cg-wrap.board-brown cg-board {
-    background-image: conic-gradient(#f0d9b5 90deg, #b58863 90deg 180deg, #f0d9b5 180deg 270deg, #b58863 270deg) !important;
+    background-image: conic-gradient(#b58863 90deg, #f0d9b5 90deg 180deg, #b58863 180deg 270deg, #f0d9b5 270deg) !important;
     background-size: 25% 25% !important;
 }
 
 /* Purple */
 .cg-wrap.board-purple cg-board {
-    background-image: conic-gradient(#9f90b0 90deg, #7d4a8d 90deg 180deg, #9f90b0 180deg 270deg, #7d4a8d 270deg) !important;
+    background-image: conic-gradient(#7d4a8d 90deg, #9f90b0 90deg 180deg, #7d4a8d 180deg 270deg, #9f90b0 270deg) !important;
     background-size: 25% 25% !important;
 }
 
 /* Slate (Flat - Checkerboard Pattern) */
 .cg-wrap.board-slate cg-board {
     /* Low contrast modern slate */
-    background-image: conic-gradient(#cbd5e1 90deg, #64748b 90deg 180deg, #cbd5e1 180deg 270deg, #64748b 270deg) !important;
+    background-image: conic-gradient(#64748b 90deg, #cbd5e1 90deg 180deg, #64748b 180deg 270deg, #cbd5e1 270deg) !important;
     background-size: 25% 25% !important;
     background-color: #334155 !important;
 }

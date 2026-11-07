@@ -15,18 +15,22 @@ export default function Header({ userElo, botElo, onToggleMode, isMenuOpen, isGu
     const difficultyPercent = Math.min(100, Math.max(0, ((botElo - 800) / (3000 - 800)) * 100));
 
     return (
-        <header className="bg-slate-800 border-b border-slate-700 shrink-0 shadow-lg z-[100] relative">
+        <header className="bg-slate-800 border-b border-slate-700 shrink-0 shadow-lg z-[100] relative safe-area-top">
             <div className="max-w-[1920px] mx-auto px-4 flex justify-between items-center h-16 md:h-20">
                 {/* Left: Logo & Difficulty Wrapper */}
                 <div className="flex items-center gap-6 md:gap-8">
                     {/* Logo */}
-                    <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+                    <button
+                        onClick={() => navigate('/')}
+                        aria-label="Chess Pls home"
+                        className="flex items-center gap-3 min-h-11 min-w-11 cursor-pointer text-left"
+                    >
                         <img src="/chess_icon.jpg?v=3" alt="Chess Pls" className="w-8 h-8 md:w-10 md:h-10 rounded-lg shadow-sm" />
                         <div className="hidden md:block">
                             <h1 className="text-lg font-bold text-white leading-none">Chess Pls</h1>
                             <p className="text-[10px] text-slate-400 font-medium tracking-wider">ADAPTIVE ENGINE</p>
                         </div>
-                    </div>
+                    </button>
 
                     {/* Stats / Difficulty (Desktop) */}
                     <div className="hidden md:flex items-center gap-6">
@@ -62,7 +66,7 @@ export default function Header({ userElo, botElo, onToggleMode, isMenuOpen, isGu
                 <div className="flex items-center gap-2 md:gap-3">
                     <button
                         onClick={onToggleMode}
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg font-semibold text-xs transition-all ${isMenuOpen
+                        className={`flex items-center gap-2 px-3 py-1.5 min-h-11 min-w-11 rounded-lg font-semibold text-xs transition-all ${isMenuOpen
                             ? 'opacity-0 pointer-events-none'
                             : 'bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white'
                             }`}
@@ -76,7 +80,7 @@ export default function Header({ userElo, botElo, onToggleMode, isMenuOpen, isGu
                     {isGuest ? (
                         <button
                             onClick={() => navigate('/login')}
-                            className="flex items-center gap-2 px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-colors shadow-lg shadow-blue-900/20"
+                            className="flex items-center gap-2 px-4 py-1.5 min-h-11 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-colors shadow-lg shadow-blue-900/20"
                         >
                             <LogIn className="w-3.5 h-3.5" />
                             <span>LOGIN</span>
@@ -84,7 +88,7 @@ export default function Header({ userElo, botElo, onToggleMode, isMenuOpen, isGu
                     ) : (
                         <button
                             onClick={() => navigate('/profile')}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold rounded-lg transition-colors border border-slate-600"
+                            className="flex items-center gap-2 px-3 py-1.5 min-h-11 min-w-11 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold rounded-lg transition-colors border border-slate-600"
                         >
                             <User className="w-3.5 h-3.5" />
                             <span className="hidden sm:inline">PROFILE</span>

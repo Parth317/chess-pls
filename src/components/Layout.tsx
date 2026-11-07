@@ -7,7 +7,7 @@ export default function Layout() {
 
     return (
         <AuthProvider>
-            <div className={`min-h-screen text-slate-200 font-sans selection:bg-blue-500/30 app-bg-${appBackground}`}>
+            <div className={`min-h-[100dvh] text-slate-200 font-sans selection:bg-blue-500/30 app-bg-${appBackground}`}>
                 <Outlet />
             </div>
         </AuthProvider>

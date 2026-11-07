@@ -1,15 +1,23 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useAuth } from '../auth/AuthProvider';
 import { Chess } from 'chess.js';
-import { stockfish, type Evaluation } from '../engine/StockfishWorker';
+import type { Move } from 'chess.js';
+import { stockfish } from '../engine/StockfishWorker';
 
 export type TimeControlMode = 'bullet' | 'blitz' | 'rapid' | 'classical';
+
+export interface CategoryStats {
+    rating: number;
+    wins: number;
+    losses: number;
+    draws: number;
+}
 
 export interface GameStats {
     // Current active rating (display only)
     rating: number;
 
-    // Legacy / Aggregate stats (optional, for backward compat or total)
+    // Aggregate stats
     wins: number;
     losses: number;
     draws: number;
@@ -17,10 +25,10 @@ export interface GameStats {
     botRating: number;
 
     // Detailed Stats
-    bullet: { rating: number; wins: number; losses: number; draws: number };
-    blitz: { rating: number; wins: number; losses: number; draws: number };
-    rapid: { rating: number; wins: number; losses: number; draws: number };
-    classical: { rating: number; wins: number; losses: number; draws: number };
+    bullet: CategoryStats;
+    blitz: CategoryStats;
+    rapid: CategoryStats;
+    classical: CategoryStats;
 }
 
 const DEFAULT_CATEGORY_STATS = { rating: 1200, wins: 0, losses: 0, draws: 0 };
@@ -39,11 +47,12 @@ const INITIAL_STATS: GameStats = {
 };
 
 export function useChessGame() {
-    const [game, setGame] = useState(new Chess());
-    const [fen, setFen] = useState(game.fen());
-    const [isBotThinking, setIsBotThinking] = useState(false);
+    const [game, setGame] = useState(() => new Chess());
     const [gameResult, setGameResult] = useState<string | null>(null);
-    const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
+
+    // Tracks the time-control mode of the current game so bot-side endings
+    // (checkmate, draw, flag) are attributed to the correct Elo bucket.
+    const activeModeRef = useRef<TimeControlMode>('blitz');
 
     // Persisted Stats
     const [stats, setStats] = useState<GameStats>(() => {
@@ -52,8 +61,7 @@ export function useChessGame() {
             try {
                 const parsed = JSON.parse(saved);
                 const legacyRating = parsed.rating || 1200;
-                // Seed helper: if specific category exists, use it; otherwise use legacy rating as seed
-                const seed = (existing: any) => existing ? existing : { ...DEFAULT_CATEGORY_STATS, rating: legacyRating };
+                const seed = (existing: CategoryStats | undefined): CategoryStats => existing ?? { ...DEFAULT_CATEGORY_STATS, rating: legacyRating };
 
                 return {
                     ...INITIAL_STATS,
@@ -71,23 +79,16 @@ export function useChessGame() {
         return INITIAL_STATS;
     });
 
-    // Initialize Stockfish & Listen for Evals
+    // Initialize Stockfish difficulty
     useEffect(() => {
-        // Apply handicap if on a losing streak
         // Drop effective Elo by 50 for each consecutive loss
         const handicap = stats.losingStreak * 50;
         const effectiveElo = Math.max(400, stats.botRating - handicap);
 
-        // console.log(`[Difficulty] Bot Rating: ${stats.botRating}, Streak: ${stats.losingStreak}, Effective Elo: ${effectiveElo}`);
-
         stockfish.setElo(effectiveElo);
-
-        stockfish.onEvaluation = (evalData) => {
-            setEvaluation(evalData);
-        };
     }, [stats.botRating, stats.losingStreak]);
 
-    // Continuous Analysis Loop
+    // Continuous analysis while it is the player's turn
     useEffect(() => {
         if (gameResult) {
             stockfish.stop();
@@ -97,7 +98,7 @@ export function useChessGame() {
         if (game.turn() === 'w') {
             stockfish.startAnalysis(game.fen());
         }
-    }, [fen, gameResult, game.turn()]);
+    }, [game, gameResult]);
 
     // Persist Stats
     useEffect(() => {
@@ -108,10 +109,9 @@ export function useChessGame() {
 
     const updateElo = useCallback(async (result: 'win' | 'loss' | 'draw', mode: TimeControlMode = 'blitz') => {
         setStats(prev => {
-            // Get current category stats
             const currentCategory = prev[mode];
             let newRating = currentCategory.rating;
-            let newBotRating = prev.botRating; // Global bot rating for now? Or per category? Let's keep bot global to adapt to user skill generally.
+            let newBotRating = prev.botRating;
             let newStreak = prev.losingStreak;
 
             if (result === 'win') {
@@ -126,17 +126,14 @@ export function useChessGame() {
                 newStreak = 0;
             }
 
-            // Construct new stats
             const newStats: GameStats = {
                 ...prev,
-                rating: newRating, // Update "main" rating to current mode's rating
+                rating: newRating,
                 botRating: newBotRating,
                 losingStreak: newStreak,
-                // Update aggregate (optional, mostly for legacy view)
                 wins: result === 'win' ? prev.wins + 1 : prev.wins,
                 losses: result === 'loss' ? prev.losses + 1 : prev.losses,
                 draws: result === 'draw' ? prev.draws + 1 : prev.draws,
-                // Update specific category
                 [mode]: {
                     rating: newRating,
                     wins: result === 'win' ? currentCategory.wins + 1 : currentCategory.wins,
@@ -148,15 +145,11 @@ export function useChessGame() {
             // Sync to Supabase if logged in
             if (user) {
                 import('../auth/supabase').then(({ supabase }) => {
-                    const updatePayload: any = {
-                        // Legacy columns
+                    const updatePayload: Record<string, number> = {
                         rating: newStats.rating,
                         wins: newStats.wins,
                         losses: newStats.losses,
                         draws: newStats.draws,
-
-                        // New Columns (if they exist - Supabase will ignore if not? No, it will error. 
-                        // We assume user ran migration. If not, this might fail silently or log error.)
                         [`${mode}_rating`]: newStats[mode].rating,
                         [`${mode}_wins`]: newStats[mode].wins,
                         [`${mode}_losses`]: newStats[mode].losses,
@@ -179,24 +172,20 @@ export function useChessGame() {
 
         import('../auth/supabase').then(({ supabase }) => {
             supabase.from('profiles')
-                .select('*') // Select all to get new columns
+                .select('*')
                 .eq('id', user.id).single()
                 .then(({ data, error }) => {
                     if (data && !error) {
                         setStats(prev => {
                             const legacyRating = data.rating || 1200;
-                            // Helper to seed rating: use specific if exists, else legacy, else default
-                            const seedRating = (specific: number | null) => specific || legacyRating; // Use legacy as seed to preserve progress
+                            const seedRating = (specific: number | null) => specific || legacyRating;
 
                             return {
                                 ...prev,
-                                // Legacy
                                 rating: legacyRating,
                                 wins: data.wins || 0,
                                 losses: data.losses || 0,
                                 draws: data.draws || 0,
-
-                                // Detailed
                                 bullet: {
                                     rating: seedRating(data.bullet_rating),
                                     wins: data.bullet_wins || 0,
@@ -221,7 +210,6 @@ export function useChessGame() {
                                     losses: data.classical_losses || 0,
                                     draws: data.classical_draws || 0
                                 },
-
                                 botRating: prev.botRating
                             };
                         });
@@ -230,7 +218,7 @@ export function useChessGame() {
         });
     }, [user]);
 
-    const checkGameOver = (paramGame: Chess, mode: TimeControlMode = 'blitz') => {
+    const checkGameOver = useCallback((paramGame: Chess, mode: TimeControlMode = 'blitz') => {
         if (paramGame.isGameOver()) {
             if (paramGame.isCheckmate()) {
                 const winner = paramGame.turn() === 'w' ? 'Black' : 'White';
@@ -241,54 +229,41 @@ export function useChessGame() {
                 updateElo('draw', mode);
             }
         }
-    };
+    }, [updateElo]);
 
-
-    // Debugging (Internal Console)
-    const log = (msg: string) => console.log(`[ChessGame] ${msg} `);
     const makeMove = useCallback((move: { from: string; to: string; promotion?: string }, mode: TimeControlMode = 'blitz') => {
         const gameCopy = new Chess();
-        gameCopy.loadPgn(game.pgn()); // Clone with history
-        log(`Attempting move: ${JSON.stringify(move)} `);
+        gameCopy.loadPgn(game.pgn());
 
         try {
-            let result = null;
+            let result: Move | null = null;
 
-            // Strategy: Standard move command
-            // We can trust the validation from the UI (App.tsx and Chessground) mostly
             try {
-                // Pass promotion if exists, otherwise undefined
                 result = gameCopy.move({
                     from: move.from,
                     to: move.to,
-                    promotion: move.promotion || 'q' // Auto-queen fallthrough if not specified but needed
+                    promotion: move.promotion || 'q',
                 });
-            } catch (e) { /* ignore */ }
+            } catch { /* ignore */ }
 
-            // Retry without promotion if failed (sometimes 'q' causes error if not promo move)
+            // Retry without promotion if the explicit promotion failed
             if (!result && !move.promotion) {
                 try {
                     result = gameCopy.move({ from: move.from, to: move.to });
-                } catch (e) { /* ignore */ }
+                } catch { /* ignore */ }
             }
-
 
             if (result) {
-                log(`Move successful: ${result.san} `);
                 setGame(gameCopy);
-                setFen(gameCopy.fen());
                 checkGameOver(gameCopy, mode);
                 return true;
-            } else {
-                log("All strategies failed. Move rejected.");
-                return false;
             }
+            return false;
         } catch (e) {
-            log(`Critical error during move: ${e} `);
             console.error("Move execution failed:", e);
             return false;
         }
-    }, [game, log, checkGameOver]);
+    }, [game, checkGameOver]);
 
     // Bot Move Effect
     useEffect(() => {
@@ -297,18 +272,12 @@ export function useChessGame() {
         const makeBotMove = async () => {
             if (game.turn() !== 'b' || game.isGameOver() || gameResult) return;
 
-            // Instant Move (No Delay) to prevent Worker Race Conditions
-            setIsBotThinking(true);
-
-            // Get best move
             const bestMove = await stockfish.getBestMove(game.fen());
 
             if (isCancelled) return;
 
-            setIsBotThinking(false);
-
             if (bestMove) {
-                // Use PGN to preserve history (Critical Fix)
+                // Use PGN to preserve history
                 const gameCopy = new Chess();
                 gameCopy.loadPgn(game.pgn());
 
@@ -321,8 +290,7 @@ export function useChessGame() {
 
                     if (result) {
                         setGame(gameCopy);
-                        setFen(gameCopy.fen());
-                        checkGameOver(gameCopy);
+                        checkGameOver(gameCopy, activeModeRef.current);
                     }
                 } catch (e) {
                     console.error("Bot move failed (likely race condition):", e);
@@ -334,32 +302,32 @@ export function useChessGame() {
 
         return () => {
             isCancelled = true;
-            setIsBotThinking(false);
-            stockfish.stop(); // Stop calculation if unmounting/changing turn
+            stockfish.stop();
         };
-    }, [game, gameResult]);
+    }, [game, gameResult, checkGameOver]);
 
-    const resetGame = () => {
-        const newGame = new Chess();
-        setGame(newGame);
-        setFen(newGame.fen());
+    const resetGame = useCallback(() => {
+        setGame(new Chess());
         setGameResult(null);
-        setEvaluation(null);
         stockfish.stop();
-    };
+    }, []);
 
-    const forceTestMove = () => { /* no-op */ };
+    const setActiveMode = useCallback((mode: TimeControlMode) => {
+        activeModeRef.current = mode;
+    }, []);
+
+    const handleFlagFall = useCallback((loser: 'w' | 'b', mode: TimeControlMode = 'blitz') => {
+        setGameResult(loser === 'w' ? 'Black won on time' : 'White won on time');
+        updateElo(loser === 'w' ? 'loss' : 'win', mode);
+    }, [updateElo]);
 
     return {
         game,
-        fen,
         makeMove,
         resetGame,
-        isBotThinking,
         gameResult,
         stats,
-        evaluation,
-        debugLog: [],
-        forceTestMove
+        setActiveMode,
+        handleFlagFall,
     };
 }

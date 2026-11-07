@@ -34,9 +34,9 @@ export default function MoveHistory({ history }: MoveHistoryProps) {
 
             <div
                 ref={containerRef}
-                className="flex-1 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent"
+                className="flex-1 overflow-y-auto p-2"
             >
-                <table className="w-full text-sm item-center">
+                <table className="w-full text-sm">
                     <tbody>
                         {movePairs.map((pair) => (
                             <tr key={pair.num} className="odd:bg-white/5">

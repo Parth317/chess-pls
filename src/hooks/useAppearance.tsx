@@ -65,6 +65,7 @@ export function AppearanceProvider({ children }: { children: React.ReactNode }) 
     );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAppearance(): AppearanceState {
     const context = useContext(AppearanceContext);
     if (context === undefined) {

@@ -43,23 +43,24 @@ export default function AppearanceModal({ isOpen, onClose }: AppearanceModalProp
     return (
         <div
             onClick={onClose}
-            className="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 safe-area-inset-top"
+            className="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 safe-area-top"
         >
             <div
                 onClick={e => e.stopPropagation()}
-                className="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden"
+                className="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden"
             >
                 <div className="flex items-center justify-between p-4 border-b border-slate-700">
                     <h2 className="text-xl font-bold text-white">Appearance</h2>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-slate-700 rounded-full transition-colors text-slate-400 hover:text-white"
+                        aria-label="Close appearance settings"
+                        className="p-2 min-h-11 min-w-11 hover:bg-slate-700 rounded-full transition-colors text-slate-400 hover:text-white"
                     >
                         <X className="w-5 h-5" />
                     </button>
                 </div>
 
-                <div className="p-6 space-y-8 max-h-[80vh] overflow-y-auto">
+                <div className="p-6 space-y-8 max-h-[80dvh] overflow-y-auto">
 
                     {/* Background Selection */}
                     <div className="space-y-3">
